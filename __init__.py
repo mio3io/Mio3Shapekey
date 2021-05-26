@@ -68,7 +68,8 @@ class VIEW3D_PT_Mio3sksync(Panel):
                                     "key_blocks", context.object, "active_shape_key_index", rows=3)
 
                 for cobj in context.object.mio3sksync.syncs.objects:
-                    if (cobj.active_shape_key is not None):
+                    if (hasattr(cobj.data, "shape_keys")):
+
                         for ckey in cobj.data.shape_keys.key_blocks:
                             collection_keys.append(ckey.name)
                             if (cobj != context.object):

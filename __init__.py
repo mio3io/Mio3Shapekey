@@ -54,19 +54,30 @@ class VIEW3D_PT_Mio3sksync(Panel):
         layout = self.layout
         row = layout.row()
         row.label(text="Sync Collection")
-        row.prop(context.object.mio3sksync, "syncs", text="")
+        
+        if (context.object.data.shape_keys):
 
-        # コレクション設定済み
-        if (context.object.mio3sksync.syncs and context.object.data.shape_keys):
-            dat = context.object.data
-            layout.template_list("MESH_UL_Mio3sksync", "", context.object.data.shape_keys,
-                                 "key_blocks", context.object, "active_shape_key_index", rows=3)
+            row.prop(context.object.mio3sksync, "syncs", text="")
 
-            for cobj in context.object.mio3sksync.syncs.objects:
-                if (cobj != context.object and cobj.active_shape_key is not None):
-                    for ckey in cobj.data.shape_keys.key_blocks:
-                        if (ckey.name in dat.shape_keys.key_blocks and ckey.value != dat.shape_keys.key_blocks[ckey.name].value):
-                            ckey.value = dat.shape_keys.key_blocks[ckey.name].value
+            collection_keys = []
+
+            # コレクション設定済み
+            if (context.object.mio3sksync.syncs):
+                dat = context.object.data
+                layout.template_list("MESH_UL_Mio3sksync", "", context.object.data.shape_keys,
+                                    "key_blocks", context.object, "active_shape_key_index", rows=3)
+
+                for cobj in context.object.mio3sksync.syncs.objects:
+                    if (cobj.active_shape_key is not None):
+                        for ckey in cobj.data.shape_keys.key_blocks:
+                            collection_keys.append(ckey.name)
+                            if (cobj != context.object):
+                                if (ckey.name in dat.shape_keys.key_blocks and ckey.value != dat.shape_keys.key_blocks[ckey.name].value):
+                                    ckey.value = dat.shape_keys.key_blocks[ckey.name].value
+
+            row = layout.row()
+            row.label(text="Local:" + str(len(context.object.data.shape_keys.key_blocks)))
+            row.label(text="Collection:" + str(len(list(set(collection_keys)))))
 
 
 class MIO3SKSYNC_Props(PropertyGroup):

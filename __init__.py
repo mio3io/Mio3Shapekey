@@ -59,8 +59,6 @@ class VIEW3D_PT_Mio3sksync(Panel):
         }
 
     def draw(self, context):
-        obj = context.object
-
         layout = self.layout
         row = layout.row()
         row.label(text="Sync Collection")
@@ -99,7 +97,7 @@ class VIEW3D_PT_Mio3sksync(Panel):
             row.label(text="Collection:" + str(len(list(set(collection_keys)))))
 
 
-def callback_update_shapekey(*args):
+def callback_update_shapekey():
     context = bpy.context
     if context.object.data.shape_keys:
         if context.object.mio3sksync.syncs:

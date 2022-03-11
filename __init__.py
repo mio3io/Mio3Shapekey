@@ -26,13 +26,11 @@ class MIO3SS_Props(PropertyGroup):
     )
 
 
-msgbus_owner = None
+msgbus_owner = object()
 
 
 def register_msgbus():
-    global msgbus_owner
-
-    msgbus_owner = object()
+    bpy.msgbus.clear_by_owner(msgbus_owner)
     bpy.msgbus.subscribe_rna(
         key=(bpy.types.ShapeKey, "value"),
         owner=msgbus_owner,
@@ -45,10 +43,12 @@ def register_msgbus():
         args=(),
         notify=callback_update_shapekey,
     )
+    if load_handler not in bpy.app.handlers.load_post:
+        bpy.app.handlers.load_post.append(load_handler)
 
 
 @persistent
-def msgbu_handler(scene):
+def load_handler(scene):
     register_msgbus()
 
 
@@ -67,22 +67,16 @@ def register():
     for c in classes:
         bpy.utils.register_class(c)
     Object.mio3sksync = PointerProperty(type=MIO3SS_Props)
-    bpy.app.handlers.load_post.append(msgbu_handler)
     bpy.app.translations.register(__name__, translation_dict)
-    if msgbus_owner is None:
-        register_msgbus()
+    register_msgbus()
 
 
 def unregister():
-    global msgbus_owner
-
     for c in classes:
         bpy.utils.unregister_class(c)
-    bpy.app.handlers.load_post.remove(msgbu_handler)
     bpy.app.translations.unregister(__name__)
-    if msgbus_owner is not None:
-        bpy.msgbus.clear_by_owner(msgbus_owner)
-        msgbus_owner = None
+    bpy.app.handlers.load_post.remove(load_handler)
+    bpy.msgbus.clear_by_owner(msgbus_owner)
     del Object.mio3sksync
 
 

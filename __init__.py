@@ -11,7 +11,7 @@ from .AddShapekey import MIO3SS_OT_SomeFile, MIO3SS_OT_AddPresets, MIO3SS_OT_Fil
 bl_info = {
     "name": "Mio3 ShapeKeySync",
     "author": "mio3io",
-    "version": (2, 1, 1),
+    "version": (2, 1, 2),
     "blender": (3, 0, 0),
     "warning": "",
     "location": "View3D > Sidebar",

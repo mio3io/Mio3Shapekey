@@ -9,7 +9,7 @@ from .op_add_shapekey import *
 bl_info = {
     "name": "Mio3 ShapeKeySync",
     "author": "mio3io",
-    "version": (2, 1, 2),
+    "version": (2, 2, 0),
     "blender": (3, 0, 0),
     "warning": "",
     "location": "View3D > Sidebar",

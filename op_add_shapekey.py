@@ -25,6 +25,10 @@ class MIO3SS_OT_some_file(Operator, ImportHelper):
         maxlen=255,
     )
 
+    @classmethod
+    def poll(cls, context):
+        return True
+
     def execute(self, context):
         # context, self.filepath, self.use_setting
         with open(self.filepath) as f:
@@ -51,6 +55,10 @@ class MIO3SS_OT_add_preset(Operator):
         ],
     )
 
+    @classmethod
+    def poll(cls, context):
+        return True
+
     def execute(self, context):
         with open(TEMPLATE_DIR + self.mode + ".csv") as f:
             reader = csv.reader(f)
@@ -66,11 +74,16 @@ class MIO3SS_OT_fill_keys(Operator):
     bl_description = bpy.app.translations.pgettext("Fill shapekeys from collection")
     bl_options = {"REGISTER", "UNDO"}
 
+    @classmethod
+    def poll(cls, context):
+        return (
+            context.object is not None
+            and context.object.type in OBJECT_TYPES
+            and context.object.mio3sksync.syncs is not None
+        )
+
     def execute(self, context):
         object = context.object
-
-        if object.type not in OBJECT_TYPES or object.mio3sksync.syncs is None:
-            return {"CANCELLED"}
 
         collection_keys = []
         for cobj in object.mio3sksync.syncs.objects:

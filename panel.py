@@ -14,18 +14,18 @@ class MIO3SS_PT_main(Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.object is not None and context.object.type in OBJECT_TYPES
+        return (
+            context.object is not None
+            and context.object.type in OBJECT_TYPES
+            and context.object.active_shape_key is not None
+        )
 
     def draw(self, context):
         layout = self.layout
         object = context.object
+
         row = layout.row()
-
-        if object.data.shape_keys is None:
-            return
-
         row.label(text="Sync Collection")
-
         row.prop(object.mio3sksync, "syncs", text="")
 
         collection_keys = []

@@ -1,12 +1,12 @@
 import bpy
-from bpy.types import PropertyGroup, PointerProperty, Collection, Object, Scene
+from bpy.types import PropertyGroup, PointerProperty, Collection, Object
 from bpy.props import PointerProperty
 from bpy.app.handlers import persistent
 
-from .Dict import *
-from .UI import *
-from .ShapekeySync import *
-from .AddShapekey import MIO3SS_OT_some_file, MIO3SS_OT_add_preset, MIO3SS_OT_fill_keys
+from .dictionary import *
+from .panel import *
+from .fn_sync_shapekey import *
+from .op_add_shapekey import MIO3SS_OT_some_file, MIO3SS_OT_add_preset, MIO3SS_OT_fill_keys
 
 bl_info = {
     "name": "Mio3 ShapeKeySync",
@@ -72,11 +72,11 @@ def register():
 
 
 def unregister():
-    for c in classes:
-        bpy.utils.unregister_class(c)
-    bpy.app.translations.unregister(__name__)
     bpy.app.handlers.load_post.remove(load_handler)
     bpy.msgbus.clear_by_owner(msgbus_owner)
+    bpy.app.translations.unregister(__name__)
+    for c in classes:
+        bpy.utils.unregister_class(c)
     del Object.mio3sksync
 
 

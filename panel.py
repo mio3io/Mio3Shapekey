@@ -1,6 +1,7 @@
 import bpy
 from bpy.types import Panel, UIList
 
+
 OBJECT_TYPES = {"MESH", "CURVE", "SURFACE", "LATTICE"}
 
 

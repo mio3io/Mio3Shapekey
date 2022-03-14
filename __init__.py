@@ -6,7 +6,7 @@ from bpy.app.handlers import persistent
 from .Dict import *
 from .UI import *
 from .ShapekeySync import *
-from .AddShapekey import MIO3SS_OT_SomeFile, MIO3SS_OT_AddPresets, MIO3SS_OT_FillKeys
+from .AddShapekey import MIO3SS_OT_some_file, MIO3SS_OT_add_preset, MIO3SS_OT_fill_keys
 
 bl_info = {
     "name": "Mio3 ShapeKeySync",
@@ -20,7 +20,7 @@ bl_info = {
 }
 
 
-class MIO3SS_Props(PropertyGroup):
+class MIO3SS_props(PropertyGroup):
     syncs: PointerProperty(
         name=bpy.app.translations.pgettext("Sync Collection"), type=Collection
     )
@@ -53,20 +53,20 @@ def load_handler(scene):
 
 
 classes = [
-    MIO3SS_Props,
-    MIO3SS_MT_Context,
-    MIO3SS_UL_Mio3sksync,
-    MIO3SS_PT_Mio3sksync,
-    MIO3SS_OT_SomeFile,
-    MIO3SS_OT_AddPresets,
-    MIO3SS_OT_FillKeys,
+    MIO3SS_props,
+    MIO3SS_MT_context,
+    MIO3SS_UL_shape_keys,
+    MIO3SS_PT_main,
+    MIO3SS_OT_some_file,
+    MIO3SS_OT_add_preset,
+    MIO3SS_OT_fill_keys,
 ]
 
 
 def register():
     for c in classes:
         bpy.utils.register_class(c)
-    Object.mio3sksync = PointerProperty(type=MIO3SS_Props)
+    Object.mio3sksync = PointerProperty(type=MIO3SS_props)
     bpy.app.translations.register(__name__, translation_dict)
     register_msgbus()
 

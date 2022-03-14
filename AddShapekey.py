@@ -11,7 +11,7 @@ ADDON_DIR = os.path.dirname(__file__)
 TEMPLATE_DIR = ADDON_DIR + os.sep + "Templates" + os.sep
 
 # ファイルの読み込み
-class MIO3SS_OT_SomeFile(Operator, ImportHelper):
+class MIO3SS_OT_some_file(Operator, ImportHelper):
     bl_idname = "mio3ss.add_file"
     bl_label = "Import"
     bl_description = bpy.app.translations.pgettext("Add Import CSV")
@@ -36,7 +36,7 @@ class MIO3SS_OT_SomeFile(Operator, ImportHelper):
 
 
 # プリセットの読み込み
-class MIO3SS_OT_AddPresets(Operator):
+class MIO3SS_OT_add_preset(Operator):
     bl_idname = "mio3ss.add_preset"
     bl_label = "Import"
     bl_description = bpy.app.translations.pgettext("Add from presets")
@@ -60,7 +60,7 @@ class MIO3SS_OT_AddPresets(Operator):
 
 
 # コレクション内で使用されているキーをすべて作成
-class MIO3SS_OT_FillKeys(Operator):
+class MIO3SS_OT_fill_keys(Operator):
     bl_idname = "mio3ss.fill_keys"
     bl_label = "Fill shapekeys from collection"
     bl_description = bpy.app.translations.pgettext("Fill shapekeys from collection")

@@ -4,7 +4,7 @@ from bpy.types import Panel, UIList
 OBJECT_TYPES = {"MESH", "CURVE", "SURFACE", "LATTICE"}
 
 
-class MIO3SS_PT_Mio3sksync(Panel):
+class MIO3SS_PT_main(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Item"
@@ -32,7 +32,7 @@ class MIO3SS_PT_Mio3sksync(Panel):
         # コレクション設定済み
         if object.mio3sksync.syncs is not None:
             layout.template_list(
-                "MIO3SS_UL_Mio3sksync",
+                "MIO3SS_UL_shape_keys",
                 "",
                 object.data.shape_keys,
                 "key_blocks",
@@ -55,7 +55,7 @@ class MIO3SS_PT_Mio3sksync(Panel):
         row.menu("MIO3SS_MT_context", icon="DOWNARROW_HLT", text="")
 
 
-class MIO3SS_UL_Mio3sksync(UIList):
+class MIO3SS_UL_shape_keys(UIList):
     def draw_item(
         self, _context, layout, _data, item, icon, active_data, _active_propname, index
     ):
@@ -83,7 +83,7 @@ class MIO3SS_UL_Mio3sksync(UIList):
             layout.label(text="", icon_value=icon)
 
 
-class MIO3SS_MT_Context(bpy.types.Menu):
+class MIO3SS_MT_context(bpy.types.Menu):
     bl_idname = "MIO3SS_MT_context"
     bl_label = "Context Menu"
 

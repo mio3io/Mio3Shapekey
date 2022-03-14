@@ -8,7 +8,7 @@ from bpy.props import StringProperty, EnumProperty
 OBJECT_TYPES = {"MESH", "CURVE", "SURFACE", "LATTICE"}
 
 ADDON_DIR = os.path.dirname(__file__)
-TEMPLATE_DIR = ADDON_DIR + os.sep + "Templates" + os.sep
+TEMPLATE_DIR = ADDON_DIR + os.sep + "_templates" + os.sep
 
 # ファイルの読み込み
 class MIO3SS_OT_some_file(Operator, ImportHelper):
@@ -47,11 +47,11 @@ class MIO3SS_OT_add_preset(Operator):
     bl_options = {"REGISTER", "UNDO"}
 
     mode: EnumProperty(
-        default="VRC_VISEME",
+        default="vrc_viseme",
         items=[
-            ("VRC_VISEME", "VRChat VISEME", ""),
-            ("MMD_LIGHT", "MMD LIGHT", ""),
-            ("PERFECT_SYNC", "PERFECT SYNC", ""),
+            ("vrc_viseme", "VRChat Viseme", ""),
+            ("mmd_light", "MMD Light", ""),
+            ("perfect_sync", "Perfect Sync", ""),
         ],
     )
 

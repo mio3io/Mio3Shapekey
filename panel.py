@@ -95,13 +95,13 @@ class MIO3SS_MT_context(bpy.types.Menu):
         )
         layout.operator(
             "mio3ss.add_preset", text=bpy.app.translations.pgettext("Add VRChat Viseme")
-        ).mode = "VRC_VISEME"
+        ).mode = "vrc_viseme"
         layout.operator(
             "mio3ss.add_preset", text=bpy.app.translations.pgettext("Add MMD Lite")
-        ).mode = "MMD_LIGHT"
+        ).mode = "mmd_light"
         layout.operator(
             "mio3ss.add_preset", text=bpy.app.translations.pgettext("Add Perfect Sync")
-        ).mode = "PERFECT_SYNC"
+        ).mode = "perfect_sync"
         layout.operator(
             "mio3ss.fill_keys", text=bpy.app.translations.pgettext("Fill Shapekeys")
         )

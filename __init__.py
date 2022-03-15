@@ -1,9 +1,9 @@
 import bpy
 from bpy.types import PropertyGroup, Collection, Object
 from bpy.app.handlers import persistent
+
 from .dictionary import *
 from .panel import *
-from .fn_sync_shapekey import *
 from .op_add_shapekey import *
 
 bl_info = {

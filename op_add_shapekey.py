@@ -102,7 +102,7 @@ class MIO3SS_OT_fill_keys(Operator):
 def addNewKey(keyname, context):
     if keyname in context.object.data.shape_keys.key_blocks:
         return
-    context.object.shape_key_add(name=keyname)
+    context.object.shape_key_add(name=keyname, from_mix=False)
 
 
 def callback_update_shapekey():

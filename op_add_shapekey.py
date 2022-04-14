@@ -1,20 +1,17 @@
-import bpy
 import csv
-import os
+import bpy
 from bpy_extras.io_utils import ImportHelper
 from bpy.types import Operator
 from bpy.props import StringProperty, EnumProperty
+from .define import *
+from .op_util import *
 
-OBJECT_TYPES = {"MESH", "CURVE", "SURFACE", "LATTICE"}
-
-ADDON_DIR = os.path.dirname(__file__)
-TEMPLATE_DIR = ADDON_DIR + os.sep + "_templates" + os.sep
 
 # ファイルの読み込み
-class MIO3SS_OT_some_file(Operator, ImportHelper):
+class MIO3SK_OT_some_file(Operator, ImportHelper):
     bl_idname = "mio3ss.add_file"
     bl_label = "Import"
-    bl_description = bpy.app.translations.pgettext("Add Import CSV")
+    bl_description = "Add: Import CSV"
     bl_options = {"REGISTER", "UNDO"}
 
     filename_ext = ".csv"
@@ -27,7 +24,7 @@ class MIO3SS_OT_some_file(Operator, ImportHelper):
 
     @classmethod
     def poll(cls, context):
-        return True
+        return context.object is not None and context.object.type in OBJECT_TYPES
 
     def execute(self, context):
         # context, self.filepath, self.use_setting
@@ -40,10 +37,10 @@ class MIO3SS_OT_some_file(Operator, ImportHelper):
 
 
 # プリセットの読み込み
-class MIO3SS_OT_add_preset(Operator):
+class MIO3SK_OT_add_preset(Operator):
     bl_idname = "mio3ss.add_preset"
     bl_label = "Import"
-    bl_description = bpy.app.translations.pgettext("Add from presets")
+    bl_description = "Add: from presets"
     bl_options = {"REGISTER", "UNDO"}
 
     mode: EnumProperty(
@@ -57,10 +54,11 @@ class MIO3SS_OT_add_preset(Operator):
 
     @classmethod
     def poll(cls, context):
-        return True
+        return context.object is not None and context.object.type in OBJECT_TYPES
 
     def execute(self, context):
-        with open(TEMPLATE_DIR + self.mode + ".csv") as f:
+        file = os.path.join(TEMPLATE_DIR, self.mode + ".csv")
+        with open(file) as f:
             reader = csv.reader(f)
             for row in reader:
                 addNewKey(row[0], context)
@@ -68,10 +66,10 @@ class MIO3SS_OT_add_preset(Operator):
 
 
 # コレクション内で使用されているキーをすべて作成
-class MIO3SS_OT_fill_keys(Operator):
+class MIO3SK_OT_fill_keys(Operator):
     bl_idname = "mio3ss.fill_keys"
     bl_label = "Fill shapekeys from collection"
-    bl_description = bpy.app.translations.pgettext("Fill shapekeys from collection")
+    bl_description = "Fill shapekeys from collection"
     bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
@@ -90,7 +88,7 @@ class MIO3SS_OT_fill_keys(Operator):
             if cobj.type not in OBJECT_TYPES or cobj.active_shape_key is None:
                 continue
             for ckey in cobj.data.shape_keys.key_blocks:
-                if (ckey.name not in collection_keys):
+                if ckey.name not in collection_keys:
                     collection_keys.append(ckey.name)
 
         for name in collection_keys:
@@ -104,25 +102,3 @@ def addNewKey(keyname, context):
         return
     context.object.shape_key_add(name=keyname, from_mix=False)
 
-
-def callback_update_shapekey():
-
-    object = bpy.context.object
-    if object.type not in OBJECT_TYPES or object.mio3sksync.syncs is None:
-        return None
-
-    # アクティブオブジェクトのシェイプキーのあるオブジェクト＆同期コレクションが設定されている
-
-    shape_keys = object.data.shape_keys
-
-    for item in object.mio3sksync.syncs.objects:
-
-        # コレクションアイテム
-        if item.type not in OBJECT_TYPES  or item.active_shape_key is None:
-            continue
-
-        for item_key in item.data.shape_keys.key_blocks:
-            if item != object and item_key.name in shape_keys.key_blocks:
-                item_key.mute = shape_keys.key_blocks[item_key.name].mute
-                if item_key.value != shape_keys.key_blocks[item_key.name].value:
-                    item_key.value = shape_keys.key_blocks[item_key.name].value

@@ -1,5 +1,5 @@
 import bpy
-from bpy.types import PropertyGroup, Collection, Object
+from bpy.types import PropertyGroup
 from bpy.app.handlers import persistent
 
 from .dictionary import *
@@ -18,10 +18,14 @@ bl_info = {
 }
 
 
-class MIO3SS_props(PropertyGroup):
+class MIO3SK_props(bpy.types.PropertyGroup):
     syncs: bpy.props.PointerProperty(
-        name=bpy.app.translations.pgettext("Sync Collection"), type=Collection
+        name=bpy.app.translations.pgettext("Sync Collection"), type=bpy.types.Collection
     )
+
+
+def callback_update_shapekey():
+    sync_shapekey_value()
 
 
 msgbus_owner = object()
@@ -51,31 +55,31 @@ def load_handler(scene):
 
 
 classes = [
-    MIO3SS_props,
-    MIO3SS_MT_context,
-    MIO3SS_UL_shape_keys,
-    MIO3SS_PT_main,
-    MIO3SS_OT_some_file,
-    MIO3SS_OT_add_preset,
-    MIO3SS_OT_fill_keys,
+    MIO3SK_props,
+    MIO3SK_PT_main,
+    MIO3SK_MT_context,
+    MIO3SK_UL_shape_keys,
+    MIO3SK_OT_some_file,
+    MIO3SK_OT_add_preset,
+    MIO3SK_OT_fill_keys,
 ]
 
 
 def register():
+    register_translations(__name__)
     for c in classes:
         bpy.utils.register_class(c)
-    Object.mio3sksync = bpy.props.PointerProperty(type=MIO3SS_props)
-    bpy.app.translations.register(__name__, translation_dict)
+    bpy.types.Object.mio3sksync = bpy.props.PointerProperty(type=MIO3SK_props)
     register_msgbus()
 
 
 def unregister():
     bpy.app.handlers.load_post.remove(load_handler)
     bpy.msgbus.clear_by_owner(msgbus_owner)
-    bpy.app.translations.unregister(__name__)
     for c in classes:
         bpy.utils.unregister_class(c)
-    del Object.mio3sksync
+    del bpy.types.Object.mio3sksync
+    remove_translations(__name__)
 
 
 if __name__ == "__main__":

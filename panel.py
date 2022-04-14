@@ -1,16 +1,16 @@
 import bpy
 from bpy.types import Panel, UIList
+from bpy.app.translations import pgettext
+from .define import *
+from .op_add_shapekey import *
+from .op_util import *
 
 
-OBJECT_TYPES = {"MESH", "CURVE", "SURFACE", "LATTICE"}
-
-
-class MIO3SS_PT_main(Panel):
+class MIO3SK_PT_main(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Item"
-    # bl_context = "objectmode"
-    bl_label = "Mio3 ShapeKey Sync"
+    bl_label = "Mio3 ShapeKey"
 
     @classmethod
     def poll(cls, context):
@@ -21,28 +21,30 @@ class MIO3SS_PT_main(Panel):
         )
 
     def draw(self, context):
-        layout = self.layout
+        prop_o = context.object.mio3sksync
         object = context.object
+        shape_keys = object.data.shape_keys
 
-        row = layout.row()
+        layout = self.layout
+
+        row = layout.row(align=True)
         row.label(text="Sync Collection")
-        row.prop(object.mio3sksync, "syncs", text="")
+        row.prop(prop_o, "syncs", text="")
 
         collection_keys = []
 
-        # コレクション設定済み
-        if object.mio3sksync.syncs is not None:
-            layout.template_list(
-                "MIO3SS_UL_shape_keys",
-                "",
-                object.data.shape_keys,
-                "key_blocks",
-                object,
-                "active_shape_key_index",
-                rows=3,
-            )
+        layout.template_list(
+            "MIO3SK_UL_shape_keys",
+            "",
+            shape_keys,
+            "key_blocks",
+            object,
+            "active_shape_key_index",
+            rows=3,
+        )
 
-            for cobj in object.mio3sksync.syncs.objects:
+        if prop_o.syncs is not None:
+            for cobj in prop_o.syncs.objects:
                 if cobj.type not in OBJECT_TYPES or cobj.active_shape_key is None:
                     continue
                 for ckey in cobj.data.shape_keys.key_blocks:
@@ -50,16 +52,14 @@ class MIO3SS_PT_main(Panel):
 
         # シェイプキー数
         row = layout.row()
-        row.label(text="Local:" + str(len(object.data.shape_keys.key_blocks)))
+        row.label(text="Local:" + str(len(shape_keys.key_blocks)))
         row.label(text="Collection:" + str(len(list(set(collection_keys)))))
         # コンテキストメニュー
-        row.menu("MIO3SS_MT_context", icon="DOWNARROW_HLT", text="")
+        row.menu("MIO3SK_MT_context", icon="DOWNARROW_HLT", text="")
 
 
-class MIO3SS_UL_shape_keys(UIList):
-    def draw_item(
-        self, _context, layout, _data, item, icon, active_data, _active_propname, index
-    ):
+class MIO3SK_UL_shape_keys(UIList):
+    def draw_item(self, _context, layout, _data, item, icon, active_data, _active_propname, index):
         obj = active_data
         key_block = item
         if self.layout_type in {"DEFAULT", "COMPACT"}:
@@ -68,8 +68,7 @@ class MIO3SS_UL_shape_keys(UIList):
             row = split.row(align=True)
             row.emboss = "NONE_OR_STATUS"
             if key_block.mute or (
-                obj.mode == "EDIT"
-                and not (obj.use_shape_key_edit_mode and obj.type == "MESH")
+                obj.mode == "EDIT" and not (obj.use_shape_key_edit_mode and obj.type == "MESH")
             ):
                 row.active = False
             if not item.id_data.use_relative:
@@ -84,24 +83,29 @@ class MIO3SS_UL_shape_keys(UIList):
             layout.label(text="", icon_value=icon)
 
 
-class MIO3SS_MT_context(bpy.types.Menu):
-    bl_idname = "MIO3SS_MT_context"
+class MIO3SK_MT_context(bpy.types.Menu):
+    bl_idname = "MIO3SK_MT_context"
     bl_label = "Context Menu"
 
     def draw(self, context):
         layout = self.layout
         layout.operator(
-            "mio3ss.add_file", text=bpy.app.translations.pgettext("Add Import CSV")
+            MIO3SK_OT_some_file.bl_idname,
+            text=pgettext("Add: Import CSV"),
         )
         layout.operator(
-            "mio3ss.add_preset", text=bpy.app.translations.pgettext("Add VRChat Viseme")
+            MIO3SK_OT_add_preset.bl_idname,
+            text=pgettext("Add: VRChat Viseme"),
         ).mode = "vrc_viseme"
         layout.operator(
-            "mio3ss.add_preset", text=bpy.app.translations.pgettext("Add MMD Lite")
+            MIO3SK_OT_add_preset.bl_idname,
+            text=pgettext("Add: MMD Lite"),
         ).mode = "mmd_light"
         layout.operator(
-            "mio3ss.add_preset", text=bpy.app.translations.pgettext("Add Perfect Sync")
+            MIO3SK_OT_add_preset.bl_idname,
+            text=pgettext("Add: Perfect Sync"),
         ).mode = "perfect_sync"
         layout.operator(
-            "mio3ss.fill_keys", text=bpy.app.translations.pgettext("Fill Shapekeys")
+            MIO3SK_OT_fill_keys.bl_idname,
+            text=pgettext("Fill Shapekeys"),
         )

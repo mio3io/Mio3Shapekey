@@ -12,6 +12,7 @@ def sync_shapekey_value():
             continue
         for item_key in item.data.shape_keys.key_blocks:
             if item_key.name in shape_keys.key_blocks:
-                item_key.mute = shape_keys.key_blocks[item_key.name].mute
+                if item_key.mute != shape_keys.key_blocks[item_key.name].mute:
+                    item_key.mute = shape_keys.key_blocks[item_key.name].mute
                 if item_key.value != shape_keys.key_blocks[item_key.name].value:
                     item_key.value = shape_keys.key_blocks[item_key.name].value

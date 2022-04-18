@@ -87,24 +87,3 @@ class MIO3SK_OT_move(Operator):
 
         return {"FINISHED"}
 
-
-class MIO3SK_OT_sort(Operator):
-    bl_idname = "mio3sk.sort"
-    bl_label = "Sort"
-    bl_description = "Sort"
-    bl_options = {"REGISTER", "UNDO"}
-
-    mode: bpy.props.EnumProperty(
-        default="asc",
-        items=[
-            ("asc", "asc", ""),
-            ("desc", "desc", ""),
-        ],
-    )
-
-    @classmethod
-    def poll(cls, context):
-        return context.object is not None and context.object.type in OBJECT_TYPES
-
-    def execute(self, context):
-        return {"FINISHED"}

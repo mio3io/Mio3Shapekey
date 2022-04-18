@@ -7,6 +7,7 @@ from .icons import *
 from .panel import *
 from .op_add_shapekey import *
 from .op_move_shapekey import *
+from .op_sort_shapekey import *
 
 bl_info = {
     "name": "Mio3 ShapeKeySync",
@@ -51,6 +52,8 @@ class MIO3SK_scene_props(PropertyGroup):
     move_active: bpy.props.BoolProperty(update=callback_move_active)
     move_primary: bpy.props.StringProperty()
     move_primary_auto: bpy.props.BoolProperty()
+
+    sort_priority: bpy.props.BoolProperty()
 
 class MIO3SK_props(bpy.types.PropertyGroup):
     syncs: bpy.props.PointerProperty(
@@ -115,6 +118,7 @@ classes = [
     MIO3SK_props,
     MIO3SK_PT_main,
     MIO3SK_PT_sub_move,
+    MIO3SK_PT_sub_sort,
     MIO3SK_PT_sub_options,
     MIO3SK_MT_context,
     MIO3SK_UL_shape_keys,
@@ -123,6 +127,7 @@ classes = [
     MIO3SK_OT_fill_keys,
     MIO3SK_OT_move_set_primary,
     MIO3SK_OT_move,
+    MIO3SK_OT_sort
 ]
 
 

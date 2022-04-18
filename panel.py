@@ -6,6 +6,7 @@ from .icons import *
 from .op_util import *
 from .op_add_shapekey import *
 from .op_move_shapekey import *
+from .op_sort_shapekey import *
 
 
 class MIO3SK_PT_main(Panel):
@@ -59,6 +60,7 @@ class MIO3SK_PT_main(Panel):
         # コンテキストメニュー
         row.menu("MIO3SK_MT_context", icon="DOWNARROW_HLT", text="")
 
+
 class MIO3SK_PT_sub_move(Panel):
     bl_label = "移動"
     bl_space_type = "VIEW_3D"
@@ -90,6 +92,39 @@ class MIO3SK_PT_sub_move(Panel):
             prop_s, "move_active", text=text1 if not prop_s.move_active else text2, icon_value=icons["MOVE"].icon_id
         )
 
+
+class MIO3SK_PT_sub_sort(Panel):
+    bl_label = "ソート"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Item"
+    bl_parent_id = "MIO3SK_PT_main"
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def draw(self, context):
+        prop_s = context.scene.mio3sk
+        prop_o = context.object.mio3sksync
+        object = context.object
+        layout = self.layout
+
+        row = layout.row()
+        row.label(text="名前でソート")
+
+        row = layout.row(align=True)
+        row.operator(
+            MIO3SK_OT_sort.bl_idname,
+            text=pgettext("昇順"),
+        ).type = "asc"
+        row.operator(
+            MIO3SK_OT_sort.bl_idname,
+            text=pgettext("降順"),
+        ).type = "desc"
+
+        row = layout.row()
+        row.prop(prop_s, "sort_priority", text="vrc* をトップに維持する")
 
 
 class MIO3SK_PT_sub_options(Panel):
@@ -150,17 +185,23 @@ class MIO3SK_UL_shape_keys(UIList):
         row.prop(key_block, "mute", text="", emboss=False)
 
 
-
 class MIO3SK_MT_context(bpy.types.Menu):
     bl_idname = "MIO3SK_MT_context"
     bl_label = "Context Menu"
 
     def draw(self, context):
         layout = self.layout
+
         layout.operator(
-            MIO3SK_OT_some_file.bl_idname,
-            text=pgettext("Add: Import CSV"),
-        )
+            MIO3SK_OT_sort.bl_idname,
+            text=pgettext("名前でソート（昇順）"),
+        ).type = "asc"
+        layout.operator(
+            MIO3SK_OT_sort.bl_idname,
+            text=pgettext("名前でソート（降順）"),
+        ).type = "desc"
+
+        layout.separator()
         layout.operator(
             MIO3SK_OT_add_preset.bl_idname,
             text=pgettext("Add: VRChat Viseme"),
@@ -173,6 +214,12 @@ class MIO3SK_MT_context(bpy.types.Menu):
             MIO3SK_OT_add_preset.bl_idname,
             text=pgettext("Add: Perfect Sync"),
         ).mode = "perfect_sync"
+        layout.operator(
+            MIO3SK_OT_some_file.bl_idname,
+            text=pgettext("Add: Import CSV"),
+        )
+
+        layout.separator()
         layout.operator(
             MIO3SK_OT_fill_keys.bl_idname,
             text=pgettext("Fill Shapekeys"),

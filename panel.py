@@ -2,8 +2,10 @@ import bpy
 from bpy.types import Panel, UIList
 from bpy.app.translations import pgettext
 from .define import *
-from .op_add_shapekey import *
+from .icons import *
 from .op_util import *
+from .op_add_shapekey import *
+from .op_move_shapekey import *
 
 
 class MIO3SK_PT_main(Panel):
@@ -57,6 +59,38 @@ class MIO3SK_PT_main(Panel):
         # コンテキストメニュー
         row.menu("MIO3SK_MT_context", icon="DOWNARROW_HLT", text="")
 
+class MIO3SK_PT_sub_move(Panel):
+    bl_label = "移動"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Item"
+    bl_parent_id = "MIO3SK_PT_main"
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def draw(self, context):
+        prop_s = context.scene.mio3sk
+        prop_o = context.object.mio3sksync
+        object = context.object
+        layout = self.layout
+
+        label_base = "この下に移動: " if prop_s.move_primary_auto else "移動するキー: "
+        box = layout.box()
+        box.label(text=label_base + prop_s.move_primary)
+
+        row = layout.row()
+        row.prop(prop_s, "move_primary_auto", text="連続移動：自動で対象を再選択")
+
+        text1 = "このキーの下に移動" if prop_s.move_primary_auto else "このキーを移動"
+        text2 = "移動するキーを順番に選択" if prop_s.move_primary_auto else "選択したキーの下に移動"
+        row = layout.row()
+        row.prop(
+            prop_s, "move_active", text=text1 if not prop_s.move_active else text2, icon_value=icons["MOVE"].icon_id
+        )
+
+
 
 class MIO3SK_PT_sub_options(Panel):
     bl_label = "Options"
@@ -83,28 +117,38 @@ class MIO3SK_PT_sub_options(Panel):
 
 
 class MIO3SK_UL_shape_keys(UIList):
-    def draw_item(self, _context, layout, _data, item, icon, active_data, _active_propname, index):
+    def draw_item(self, context, layout, _data, item, icon, active_data, _active_propname, index):
         obj = active_data
         key_block = item
-        if self.layout_type in {"DEFAULT", "COMPACT"}:
-            split = layout.split(factor=0.66, align=False)
-            split.prop(key_block, "name", text="", emboss=False, icon_value=icon)
-            row = split.row(align=True)
-            row.emboss = "NONE_OR_STATUS"
-            if key_block.mute or (
-                obj.mode == "EDIT" and not (obj.use_shape_key_edit_mode and obj.type == "MESH")
-            ):
-                row.active = False
-            if not item.id_data.use_relative:
-                row.prop(key_block, "frame", text="")
-            elif index > 0:
-                row.prop(key_block, "value", text="")
+        prop_s = context.scene.mio3sk
+        prop_o = context.object.mio3sksync
+
+        micon = icons["DEFAULT"].icon_id
+        if prop_s.move_primary:
+            if prop_s.move_primary_auto:
+                if prop_s.move_primary == key_block.name:
+                    micon = icons["PRIMARY"].icon_id
             else:
-                row.label(text="")
-            row.prop(key_block, "mute", text="", emboss=False)
-        elif self.layout_type == "GRID":
-            layout.alignment = "CENTER"
-            layout.label(text="", icon_value=icon)
+                if prop_s.move_primary == key_block.name:
+                    micon = icons["MOVE"].icon_id
+
+
+        split = layout.split(factor=0.68, align=False)
+        split.prop(key_block, "name", text="", emboss=False, icon_value=micon)
+        row = split.row(align=False)
+        row.emboss = "NONE_OR_STATUS"
+        if key_block.mute or (
+            obj.mode == "EDIT" and not (obj.use_shape_key_edit_mode and obj.type == "MESH")
+        ):
+            row.active = False
+        if not item.id_data.use_relative:
+            row.prop(key_block, "frame", text="")
+        elif index > 0:
+            row.prop(key_block, "value", text="")
+        else:
+            row.label(text="")
+        row.prop(key_block, "mute", text="", emboss=False)
+
 
 
 class MIO3SK_MT_context(bpy.types.Menu):

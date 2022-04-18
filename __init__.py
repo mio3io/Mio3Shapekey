@@ -3,8 +3,10 @@ from bpy.types import PropertyGroup
 from bpy.app.handlers import persistent
 
 from .dictionary import *
+from .icons import *
 from .panel import *
 from .op_add_shapekey import *
+from .op_move_shapekey import *
 
 bl_info = {
     "name": "Mio3 ShapeKeySync",
@@ -33,6 +35,9 @@ def callback_xmirror_auto_enabled(self, context):
         unregister_auto_active_mirror_edit()
 
 
+def callback_move_active(self, context):
+    bpy.ops.mio3sk.move_set_primary(mode="set" if self.move_active else "remove")
+
 class MIO3SK_scene_props(PropertyGroup):
     sync_active_shapekey_enabled: bpy.props.BoolProperty(
         default=False, update=callback_sync_active_shapekey_enabled
@@ -43,6 +48,9 @@ class MIO3SK_scene_props(PropertyGroup):
         items=[(k, f"{l} / {r}", "") for (k, l, r) in lr_suffix_types_source],
     )
 
+    move_active: bpy.props.BoolProperty(update=callback_move_active)
+    move_primary: bpy.props.StringProperty()
+    move_primary_auto: bpy.props.BoolProperty()
 
 class MIO3SK_props(bpy.types.PropertyGroup):
     syncs: bpy.props.PointerProperty(
@@ -106,17 +114,21 @@ classes = [
     MIO3SK_scene_props,
     MIO3SK_props,
     MIO3SK_PT_main,
+    MIO3SK_PT_sub_move,
     MIO3SK_PT_sub_options,
     MIO3SK_MT_context,
     MIO3SK_UL_shape_keys,
     MIO3SK_OT_some_file,
     MIO3SK_OT_add_preset,
     MIO3SK_OT_fill_keys,
+    MIO3SK_OT_move_set_primary,
+    MIO3SK_OT_move,
 ]
 
 
 def register():
     register_translations(__name__)
+    register_icons()
     for c in classes:
         bpy.utils.register_class(c)
     bpy.types.Scene.mio3sk = bpy.props.PointerProperty(type=MIO3SK_scene_props)
@@ -134,7 +146,7 @@ def unregister():
     del bpy.types.Scene.mio3sk
     del bpy.types.Object.mio3sksync
     remove_translations(__name__)
-
+    remove_icons()
 
 if __name__ == "__main__":
     register()

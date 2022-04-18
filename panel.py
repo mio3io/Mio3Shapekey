@@ -58,6 +58,30 @@ class MIO3SK_PT_main(Panel):
         row.menu("MIO3SK_MT_context", icon="DOWNARROW_HLT", text="")
 
 
+class MIO3SK_PT_sub_options(Panel):
+    bl_label = "Options"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Item"
+    bl_parent_id = "MIO3SK_PT_main"
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def draw(self, context):
+        prop_s = context.scene.mio3sk
+        object = context.object
+        layout = self.layout
+        row = layout.row()
+        row.prop(prop_s, "sync_active_shapekey_enabled", text="アクティブキーと名前を同期")
+        row = layout.row()
+        row.prop(prop_s, "xmirror_auto_enabled", text="Xミラー編集の自動切り替え")
+        row = layout.row()
+        row.label(text="L/R接尾辞タイプ")
+        row.prop(prop_s, "xmirror_auto_suffix_type", text="")
+
+
 class MIO3SK_UL_shape_keys(UIList):
     def draw_item(self, _context, layout, _data, item, icon, active_data, _active_propname, index):
         obj = active_data

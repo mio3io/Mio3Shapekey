@@ -43,7 +43,7 @@ class MIO3SK_OT_add_preset(Operator):
     bl_description = "Add: from presets"
     bl_options = {"REGISTER", "UNDO"}
 
-    mode: EnumProperty(
+    type: EnumProperty(
         default="vrc_viseme",
         items=[
             ("vrc_viseme", "VRChat Viseme", ""),
@@ -57,7 +57,7 @@ class MIO3SK_OT_add_preset(Operator):
         return context.object is not None and context.object.type in OBJECT_TYPES
 
     def execute(self, context):
-        file = os.path.join(TEMPLATE_DIR, self.mode + ".csv")
+        file = os.path.join(TEMPLATE_DIR, self.type + ".csv")
         with open(file) as f:
             reader = csv.reader(f)
             for row in reader:

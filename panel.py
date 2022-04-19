@@ -205,15 +205,15 @@ class MIO3SK_MT_context(bpy.types.Menu):
         layout.operator(
             MIO3SK_OT_add_preset.bl_idname,
             text=pgettext("Add: VRChat Viseme"),
-        ).mode = "vrc_viseme"
+        ).type = "vrc_viseme"
         layout.operator(
             MIO3SK_OT_add_preset.bl_idname,
             text=pgettext("Add: MMD Lite"),
-        ).mode = "mmd_light"
+        ).type = "mmd_light"
         layout.operator(
             MIO3SK_OT_add_preset.bl_idname,
             text=pgettext("Add: Perfect Sync"),
-        ).mode = "perfect_sync"
+        ).type = "perfect_sync"
         layout.operator(
             MIO3SK_OT_some_file.bl_idname,
             text=pgettext("Add: Import CSV"),

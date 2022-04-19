@@ -8,6 +8,7 @@ from .panel import *
 from .op_add_shapekey import *
 from .op_move_shapekey import *
 from .op_sort_shapekey import *
+from .op_reset_shapekey import *
 
 bl_info = {
     "name": "Mio3 ShapeKeySync",
@@ -128,7 +129,8 @@ classes = [
     MIO3SK_OT_fill_keys,
     MIO3SK_OT_move_set_primary,
     MIO3SK_OT_move,
-    MIO3SK_OT_sort
+    MIO3SK_OT_sort,
+    MIO3SK_OT_reset
 ]
 
 

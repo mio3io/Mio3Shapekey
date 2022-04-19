@@ -7,6 +7,7 @@ from .op_util import *
 from .op_add_shapekey import *
 from .op_move_shapekey import *
 from .op_sort_shapekey import *
+from .op_reset_shapekey import *
 
 
 class MIO3SK_PT_main(Panel):
@@ -59,6 +60,13 @@ class MIO3SK_PT_main(Panel):
         row.label(text="Collection:" + str(len(list(set(collection_keys)))))
         # コンテキストメニュー
         row.menu("MIO3SK_MT_context", icon="DOWNARROW_HLT", text="")
+
+        row = layout.row(align=True)
+        row.scale_x = 1.8
+        row.label(text="形状をリセット")
+        row.scale_x = 1
+        row.operator(MIO3SK_OT_reset.bl_idname, text="全て").type = "all"
+        row.operator(MIO3SK_OT_reset.bl_idname, text="選択").type = "select"
 
 
 class MIO3SK_PT_sub_move(Panel):

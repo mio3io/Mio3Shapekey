@@ -155,7 +155,7 @@ class MIO3SK_PT_sub_options(Panel):
         object = context.object
         layout = self.layout
         row = layout.row()
-        row.prop(prop_s, "sync_active_shapekey_enabled", text="アクティブキーと名前を同期")
+        row.prop(prop_s, "sync_active_shapekey_enabled", text="選択とリネームを同期")
         row = layout.row()
         row.prop(prop_s, "xmirror_auto_enabled", text="Xミラー編集の自動切り替え")
         row = layout.row()

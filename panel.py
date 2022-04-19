@@ -49,9 +49,7 @@ class MIO3SK_PT_main(Panel):
         )
 
         if prop_o.syncs is not None:
-            for cobj in prop_o.syncs.objects:
-                if cobj.type not in OBJECT_TYPES or cobj.active_shape_key is None:
-                    continue
+            for cobj in [o for o in prop_o.syncs.objects if has_shapekey(o)]:
                 for ckey in cobj.data.shape_keys.key_blocks:
                     collection_keys.append(ckey.name)
 
@@ -83,8 +81,6 @@ class MIO3SK_PT_sub_move(Panel):
 
     def draw(self, context):
         prop_s = context.scene.mio3sk
-        prop_o = context.object.mio3sksync
-        object = context.object
         layout = self.layout
 
         label_base = "この下に移動: " if prop_s.move_primary_auto else "移動するキー: "
@@ -118,8 +114,6 @@ class MIO3SK_PT_sub_sort(Panel):
 
     def draw(self, context):
         prop_s = context.scene.mio3sk
-        prop_o = context.object.mio3sksync
-        object = context.object
         layout = self.layout
 
         row = layout.row()
@@ -152,7 +146,6 @@ class MIO3SK_PT_sub_options(Panel):
 
     def draw(self, context):
         prop_s = context.scene.mio3sk
-        object = context.object
         layout = self.layout
         row = layout.row()
         row.prop(prop_s, "sync_active_shapekey_enabled", text="選択とリネームを同期")

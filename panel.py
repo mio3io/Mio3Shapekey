@@ -4,6 +4,7 @@ from bpy.app.translations import pgettext
 from .define import *
 from .icons import *
 from .op_util import *
+from .op_sync_shapekey import *
 from .op_add_shapekey import *
 from .op_move_shapekey import *
 from .op_sort_shapekey import *
@@ -97,7 +98,10 @@ class MIO3SK_PT_sub_move(Panel):
         text2 = "移動するキーを順番に選択" if prop_s.move_primary_auto else "選択したキーの下に移動"
         row = layout.row()
         row.prop(
-            prop_s, "move_active", text=text1 if not prop_s.move_active else text2, icon_value=icons["MOVE"].icon_id
+            prop_s,
+            "move_active",
+            text=text1 if not prop_s.move_active else text2,
+            icon_value=icons["MOVE"].icon_id,
         )
 
 
@@ -174,7 +178,6 @@ class MIO3SK_UL_shape_keys(UIList):
             else:
                 if prop_s.move_primary == key_block.name:
                     micon = icons["MOVE"].icon_id
-
 
         split = layout.split(factor=0.68, align=False)
         split.prop(key_block, "name", text="", emboss=False, icon_value=micon)

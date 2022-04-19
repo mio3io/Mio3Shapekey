@@ -58,7 +58,7 @@ class MIO3SK_OT_move(Operator):
     def execute(self, context):
         prop_s = context.scene.mio3sk
         key_blocks = bpy.context.object.data.shape_keys.key_blocks
-        
+
         if prop_s.move_primary_auto:
             base_idx = key_blocks.find(prop_s.move_primary)
             target_idx = key_blocks.find(bpy.context.object.active_shape_key.name)
@@ -75,7 +75,7 @@ class MIO3SK_OT_move(Operator):
             for i in range(move):
                 bpy.ops.object.shape_key_move(type="DOWN")
         else:
-            move = abs(base_idx - target_idx) -1
+            move = abs(base_idx - target_idx) - 1
             for i in range(abs(move)):
                 bpy.ops.object.shape_key_move(type="UP")
 
@@ -86,4 +86,3 @@ class MIO3SK_OT_move(Operator):
             prop_s.move_active = False
 
         return {"FINISHED"}
-

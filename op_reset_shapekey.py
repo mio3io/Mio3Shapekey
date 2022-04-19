@@ -29,12 +29,12 @@ class MIO3SK_OT_reset(Operator):
 
         bpy.ops.object.mode_set(mode="OBJECT")
         if self.type == "select":
-          for i, el in enumerate(mesh.vertices):
-            if el.select:
-              shapekey.data[i].co = el.co
+            for i, el in enumerate(mesh.vertices):
+                if el.select:
+                    shapekey.data[i].co = el.co
         else:
-          for i, el in enumerate(mesh.vertices):
-            shapekey.data[i].co = el.co
+            for i, el in enumerate(mesh.vertices):
+                shapekey.data[i].co = el.co
 
         mesh.update()
 

@@ -5,6 +5,7 @@ from bpy.app.handlers import persistent
 from .dictionary import *
 from .icons import *
 from .panel import *
+from .op_sync_shapekey import *
 from .op_add_shapekey import *
 from .op_move_shapekey import *
 from .op_sort_shapekey import *
@@ -40,6 +41,7 @@ def callback_xmirror_auto_enabled(self, context):
 def callback_move_active(self, context):
     bpy.ops.mio3sk.move_set_primary(mode="set" if self.move_active else "remove")
 
+
 class MIO3SK_scene_props(PropertyGroup):
     sync_active_shapekey_enabled: bpy.props.BoolProperty(
         default=False, update=callback_sync_active_shapekey_enabled
@@ -56,6 +58,7 @@ class MIO3SK_scene_props(PropertyGroup):
 
     sort_priority: bpy.props.BoolProperty()
     sort_priority_mute: bpy.props.BoolProperty()
+
 
 class MIO3SK_props(bpy.types.PropertyGroup):
     syncs: bpy.props.PointerProperty(
@@ -130,7 +133,7 @@ classes = [
     MIO3SK_OT_move_set_primary,
     MIO3SK_OT_move,
     MIO3SK_OT_sort,
-    MIO3SK_OT_reset
+    MIO3SK_OT_reset,
 ]
 
 
@@ -155,6 +158,7 @@ def unregister():
     del bpy.types.Object.mio3sksync
     remove_translations(__name__)
     remove_icons()
+
 
 if __name__ == "__main__":
     register()

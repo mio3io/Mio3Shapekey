@@ -101,4 +101,3 @@ def addNewKey(keyname, context):
     if keyname in context.object.data.shape_keys.key_blocks:
         return
     context.object.shape_key_add(name=keyname, from_mix=False)
-

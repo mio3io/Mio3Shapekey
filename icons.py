@@ -7,6 +7,7 @@ icons = bpy.utils.previews.new()
 def register_icons():
   icons.load("DEFAULT", os.path.join(ICON_DIR, "default.png"), "IMAGE")
   icons.load("PRIMARY", os.path.join(ICON_DIR, "primary.png"), "IMAGE")
+  icons.load("PRIMARY_HISTORY", os.path.join(ICON_DIR, "primary_history.png"), "IMAGE")
   icons.load("MOVE", os.path.join(ICON_DIR, "move.png"), "IMAGE")
 
   icons.load("FACE_ALL", os.path.join(ICON_DIR, "face_all.png"), "IMAGE")

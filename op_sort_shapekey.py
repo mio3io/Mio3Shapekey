@@ -26,15 +26,19 @@ class MIO3SK_OT_sort(Operator):
         prop_s = context.scene.mio3sk
 
         key_blocks = object.data.shape_keys.key_blocks
-        target_keys = [k.name for k in key_blocks[1:]]
+        target_blocks = key_blocks[1:]
 
         if prop_s.sort_priority:
-            target_keys = [key for key in target_keys if key[:3] != "vrc"]
+            target_blocks = [key for key in target_blocks if key.name[:3] != "vrc"]
+        if prop_s.sort_priority_mute:
+            target_blocks = [key for key in target_blocks if key.mute == False]
+
+        target_blocks = [k.name for k in target_blocks]
 
         sorted_keys = (
-            sorted(target_keys, key=str.lower)
+            sorted(target_blocks, key=str.lower)
             if self.type == "asc"
-            else sorted(target_keys, key=str.lower, reverse=True)
+            else sorted(target_blocks, key=str.lower, reverse=True)
         )
 
         current_key_name = object.active_shape_key.name

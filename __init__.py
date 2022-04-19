@@ -54,6 +54,7 @@ class MIO3SK_scene_props(PropertyGroup):
     move_primary_auto: bpy.props.BoolProperty()
 
     sort_priority: bpy.props.BoolProperty()
+    sort_priority_mute: bpy.props.BoolProperty()
 
 class MIO3SK_props(bpy.types.PropertyGroup):
     syncs: bpy.props.PointerProperty(

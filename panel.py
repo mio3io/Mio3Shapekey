@@ -123,8 +123,8 @@ class MIO3SK_PT_sub_sort(Panel):
             text=pgettext("降順"),
         ).type = "desc"
 
-        row = layout.row()
-        row.prop(prop_s, "sort_priority", text="vrc* をトップに維持する")
+        layout.row().prop(prop_s, "sort_priority", text="vrc* をトップに維持する")
+        layout.row().prop(prop_s, "sort_priority_mute", text="無効化中のキーをトップに維持する")
 
 
 class MIO3SK_PT_sub_options(Panel):

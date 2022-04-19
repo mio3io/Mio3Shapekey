@@ -29,12 +29,13 @@ class MIO3SK_OT_move_set_primary(Operator):
         return context.object is not None and context.object.type in OBJECT_TYPES
 
     def execute(self, context):
+        object = context.object
         prop_s = context.scene.mio3sk
         if self.mode == "remove":
             prop_s.move_primary = ""
             bpy.msgbus.clear_by_owner(move_msgbus_owner)
         else:
-            prop_s.move_primary = bpy.context.object.active_shape_key.name
+            prop_s.move_primary = object.active_shape_key.name
             bpy.msgbus.clear_by_owner(move_msgbus_owner)
             bpy.msgbus.subscribe_rna(
                 key=(bpy.types.Object, "active_shape_key_index"),
@@ -56,17 +57,18 @@ class MIO3SK_OT_move(Operator):
         return context.object is not None and context.object.type in OBJECT_TYPES
 
     def execute(self, context):
+        object = context.object
         prop_s = context.scene.mio3sk
-        key_blocks = bpy.context.object.data.shape_keys.key_blocks
+        key_blocks = object.data.shape_keys.key_blocks
 
         if prop_s.move_primary_auto:
             base_idx = key_blocks.find(prop_s.move_primary)
-            target_idx = key_blocks.find(bpy.context.object.active_shape_key.name)
+            target_idx = key_blocks.find(object.active_shape_key.name)
         else:
-            base_idx = key_blocks.find(bpy.context.object.active_shape_key.name)
+            base_idx = key_blocks.find(object.active_shape_key.name)
             target_idx = key_blocks.find(prop_s.move_primary)
 
-        bpy.context.object.active_shape_key_index = target_idx
+        object.active_shape_key_index = target_idx
 
         if base_idx == target_idx:
             move = 0

@@ -25,7 +25,7 @@ class MIO3SK_OT_reset(Operator):
         mesh = context.object.data
         shapekey = context.object.active_shape_key
 
-        current_mode = bpy.context.active_object.mode
+        current_mode = context.active_object.mode
 
         bpy.ops.object.mode_set(mode="OBJECT")
         if self.type == "select":

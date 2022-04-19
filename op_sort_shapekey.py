@@ -22,7 +22,7 @@ class MIO3SK_OT_sort(Operator):
         return context.object is not None and context.object.type in OBJECT_TYPES
 
     def execute(self, context):
-        object = bpy.context.object
+        object = context.object
         prop_s = context.scene.mio3sk
 
         key_blocks = object.data.shape_keys.key_blocks

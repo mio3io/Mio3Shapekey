@@ -12,9 +12,9 @@ from .op_sort_shapekey import *
 from .op_reset_shapekey import *
 
 bl_info = {
-    "name": "Mio3 ShapeKeySync",
+    "name": "Mio3 ShapeKey",
     "author": "mio3io",
-    "version": (2, 3, 0),
+    "version": (2, 4, 0),
     "blender": (3, 0, 0),
     "warning": "",
     "location": "View3D > Sidebar",

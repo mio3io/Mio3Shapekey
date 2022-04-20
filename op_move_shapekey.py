@@ -16,13 +16,29 @@ class MIO3SK_OT_move_set_primary(Operator):
     bl_description = "Set Move"
     bl_options = {"REGISTER", "UNDO"}
 
-    type: bpy.props.EnumProperty(
-        default="set",
-        items=[
-            ("set", "set", ""),
-            ("remove", "remove", ""),
-        ],
-    )
+    @classmethod
+    def poll(cls, context):
+        return context.object is not None and context.object.type in OBJECT_TYPES
+
+    def execute(self, context):
+        object = context.object
+        prop_s = context.scene.mio3sk
+        prop_s.move_primary = object.active_shape_key.name
+        bpy.msgbus.clear_by_owner(move_msgbus_owner)
+        bpy.msgbus.subscribe_rna(
+            key=(bpy.types.Object, "active_shape_key_index"),
+            owner=move_msgbus_owner,
+            args=(),
+            notify=callback_move_active_shapekey,
+        )
+        return {"FINISHED"}
+
+
+class MIO3SK_OT_move_remove_primary(Operator):
+    bl_idname = "mio3sk.move_remove_primary"
+    bl_label = "Set Move"
+    bl_description = "Set Move"
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(cls, context):
@@ -31,19 +47,10 @@ class MIO3SK_OT_move_set_primary(Operator):
     def execute(self, context):
         object = context.object
         prop_s = context.scene.mio3sk
-        if self.type == "remove":
-            prop_s.move_primary = ""
-            bpy.msgbus.clear_by_owner(move_msgbus_owner)
-        else:
-            prop_s.move_primary = object.active_shape_key.name
-            bpy.msgbus.clear_by_owner(move_msgbus_owner)
-            bpy.msgbus.subscribe_rna(
-                key=(bpy.types.Object, "active_shape_key_index"),
-                owner=move_msgbus_owner,
-                args=(),
-                notify=callback_move_active_shapekey,
-            )
+        prop_s.move_primary = ""
+        bpy.msgbus.clear_by_owner(move_msgbus_owner)
         return {"FINISHED"}
+
 
 
 class MIO3SK_OT_move(Operator):

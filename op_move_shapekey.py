@@ -70,16 +70,10 @@ class MIO3SK_OT_move(Operator):
 
         object.active_shape_key_index = target_idx
 
-        if base_idx == target_idx:
-            move = 0
-        elif base_idx > target_idx:
-            move = base_idx - target_idx
-            for i in range(move):
-                bpy.ops.object.shape_key_move(type="DOWN")
-        else:
-            move = abs(base_idx - target_idx) - 1
-            for i in range(abs(move)):
-                bpy.ops.object.shape_key_move(type="UP")
+        if base_idx > target_idx:
+            [bpy.ops.object.shape_key_move(type="DOWN") for i in range(base_idx - target_idx)]
+        elif base_idx < target_idx:
+            [bpy.ops.object.shape_key_move(type="UP") for i in range(target_idx - base_idx - 1)]
 
         if prop_s.move_primary_auto:
             bpy.ops.mio3sk.move_set_primary(mode="set")

@@ -70,7 +70,7 @@ class MIO3SK_OT_move(Operator):
         primary_key = prop_s.move_primary
         secondary_key = object.active_shape_key.name
 
-        if prop_s.move_primary_auto:
+        if prop_s.move_active_type == "multi":
             base_idx = key_blocks.find(primary_key)
             move_idx = object.active_shape_key_index
         else:
@@ -84,9 +84,9 @@ class MIO3SK_OT_move(Operator):
         elif base_idx < move_idx:
             [bpy.ops.object.shape_key_move(type="UP") for i in range(move_idx - base_idx - 1)]
 
-        if prop_s.move_primary_auto:
+        if prop_s.move_active_type == "multi":
             prop_s.move_primary = secondary_key
         else:
-            prop_s.move_active = False
+            prop_s.move_active_single = False
 
         return {"FINISHED"}

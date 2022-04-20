@@ -1,3 +1,4 @@
+from cgitb import enable
 import bpy
 from bpy.types import Panel, UIList
 from bpy.app.translations import pgettext
@@ -83,20 +84,17 @@ class MIO3SK_PT_sub_move(Panel):
         prop_s = context.scene.mio3sk
         layout = self.layout
 
-        label_base = "この下に移動: " if prop_s.move_primary_auto else "移動するキー: "
-        box = layout.box()
-        box.label(text=label_base + prop_s.move_primary)
-
-        row = layout.row()
-        row.prop(prop_s, "move_primary_auto", text="連続移動：自動で対象を再選択")
-
-        text1 = "このキーの下に移動" if prop_s.move_primary_auto else "このキーを移動"
-        text2 = "移動するキーを順番に選択" if prop_s.move_primary_auto else "選択したキーの下に移動"
-        row = layout.row()
-        row.prop(
+        layout.row().prop(
             prop_s,
-            "move_active",
-            text=text1 if not prop_s.move_active else text2,
+            "move_active_single",
+            text="選択中のキーを移動" if not prop_s.move_active_single else "クリックしたキーの下に移動",
+            icon_value=icons["MOVE"].icon_id,
+        )
+
+        layout.row().prop(
+            prop_s,
+            "move_active_multi",
+            text=" 選択中のキーの下に複数移動" if not prop_s.move_active_multi else "移動するキーを順番にクリック",
             icon_value=icons["MOVE"].icon_id,
         )
 
@@ -165,7 +163,7 @@ class MIO3SK_UL_shape_keys(UIList):
 
         micon = icons["DEFAULT"].icon_id
         if prop_s.move_primary:
-            if prop_s.move_primary_auto:
+            if prop_s.move_active_type == "multi":
                 if prop_s.move_primary == key_block.name:
                     micon = icons["PRIMARY"].icon_id
             else:

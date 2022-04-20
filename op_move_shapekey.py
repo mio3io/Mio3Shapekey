@@ -16,7 +16,7 @@ class MIO3SK_OT_move_set_primary(Operator):
     bl_description = "Set Move"
     bl_options = {"REGISTER", "UNDO"}
 
-    mode: bpy.props.EnumProperty(
+    type: bpy.props.EnumProperty(
         default="set",
         items=[
             ("set", "set", ""),
@@ -31,7 +31,7 @@ class MIO3SK_OT_move_set_primary(Operator):
     def execute(self, context):
         object = context.object
         prop_s = context.scene.mio3sk
-        if self.mode == "remove":
+        if self.type == "remove":
             prop_s.move_primary = ""
             bpy.msgbus.clear_by_owner(move_msgbus_owner)
         else:
@@ -60,25 +60,26 @@ class MIO3SK_OT_move(Operator):
         object = context.object
         prop_s = context.scene.mio3sk
         key_blocks = object.data.shape_keys.key_blocks
+        primary_key = prop_s.move_primary
+        secondary_key = object.active_shape_key.name
 
         if prop_s.move_primary_auto:
-            base_idx = key_blocks.find(prop_s.move_primary)
-            target_idx = key_blocks.find(object.active_shape_key.name)
+            base_idx = key_blocks.find(primary_key)
+            move_idx = object.active_shape_key_index
         else:
-            base_idx = key_blocks.find(object.active_shape_key.name)
-            target_idx = key_blocks.find(prop_s.move_primary)
+            base_idx = object.active_shape_key_index
+            move_idx = key_blocks.find(primary_key)
 
-        object.active_shape_key_index = target_idx
+        object.active_shape_key_index = move_idx
 
-        if base_idx > target_idx:
-            [bpy.ops.object.shape_key_move(type="DOWN") for i in range(base_idx - target_idx)]
-        elif base_idx < target_idx:
-            [bpy.ops.object.shape_key_move(type="UP") for i in range(target_idx - base_idx - 1)]
+        if base_idx > move_idx:
+            [bpy.ops.object.shape_key_move(type="DOWN") for i in range(base_idx - move_idx)]
+        elif base_idx < move_idx:
+            [bpy.ops.object.shape_key_move(type="UP") for i in range(move_idx - base_idx - 1)]
 
         if prop_s.move_primary_auto:
-            bpy.ops.mio3sk.move_set_primary(mode="set")
-
-        if not prop_s.move_primary_auto:
+            prop_s.move_primary = secondary_key
+        else:
             prop_s.move_active = False
 
         return {"FINISHED"}

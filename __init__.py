@@ -39,7 +39,7 @@ def callback_xmirror_auto_enabled(self, context):
 
 
 def callback_move_active(self, context):
-    bpy.ops.mio3sk.move_set_primary(mode="set" if self.move_active else "remove")
+    bpy.ops.mio3sk.move_set_primary(type="set" if self.move_active else "remove")
 
 
 class MIO3SK_scene_props(PropertyGroup):

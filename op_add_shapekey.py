@@ -2,7 +2,6 @@ import csv
 import bpy
 from bpy_extras.io_utils import ImportHelper
 from bpy.types import Operator
-from bpy.props import StringProperty, EnumProperty
 from .define import *
 from .op_util import *
 
@@ -16,7 +15,7 @@ class MIO3SK_OT_some_file(Operator, ImportHelper):
 
     filename_ext = ".csv"
 
-    filter_glob: StringProperty(
+    filter_glob: bpy.props.StringProperty(
         default="*.csv",
         options={"HIDDEN"},
         maxlen=255,
@@ -43,7 +42,7 @@ class MIO3SK_OT_add_preset(Operator):
     bl_description = "Add: from presets"
     bl_options = {"REGISTER", "UNDO"}
 
-    type: EnumProperty(
+    type: bpy.props.EnumProperty(
         default="vrc_viseme",
         items=[
             ("vrc_viseme", "VRChat Viseme", ""),
@@ -74,22 +73,17 @@ class MIO3SK_OT_fill_keys(Operator):
 
     @classmethod
     def poll(cls, context):
-        return (
-            context.object is not None
-            and context.object.type in OBJECT_TYPES
-            and context.object.mio3sksync.syncs is not None
-        )
+        return context.object is not None and is_sync_collection(context.object)
 
     def execute(self, context):
         object = context.object
+        prop_o = object.mio3sksync
 
         collection_keys = []
-        for cobj in object.mio3sksync.syncs.objects:
-            if cobj.type not in OBJECT_TYPES or cobj.active_shape_key is None:
-                continue
-            for ckey in cobj.data.shape_keys.key_blocks:
-                if ckey.name not in collection_keys:
-                    collection_keys.append(ckey.name)
+        for cobj in [o for o in prop_o.syncs.objects if has_shapekey(o)]:
+            for name in cobj.data.shape_keys.key_blocks.keys():
+                if name not in collection_keys:
+                    collection_keys.append(name)
 
         for name in collection_keys:
             addNewKey(name, context)

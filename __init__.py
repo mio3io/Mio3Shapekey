@@ -3,13 +3,18 @@ from bpy.types import PropertyGroup
 from bpy.app.handlers import persistent
 
 from .dictionary import *
+from .icons import *
 from .panel import *
+from .op_sync_shapekey import *
 from .op_add_shapekey import *
+from .op_move_shapekey import *
+from .op_sort_shapekey import *
+from .op_reset_shapekey import *
 
 bl_info = {
-    "name": "Mio3 ShapeKeySync",
+    "name": "Mio3 ShapeKey",
     "author": "mio3io",
-    "version": (2, 3, 0),
+    "version": (2, 4, 0),
     "blender": (3, 0, 0),
     "warning": "",
     "location": "View3D > Sidebar",
@@ -33,6 +38,24 @@ def callback_xmirror_auto_enabled(self, context):
         unregister_auto_active_mirror_edit()
 
 
+def callback_move_active_single(self, context):
+    if self.move_active_single:
+        self.move_active_type = "single"
+        self.move_active_multi = False
+        bpy.ops.mio3sk.move_set_primary()
+    else:
+        bpy.ops.mio3sk.move_remove_primary()
+
+
+def callback_move_active_multi(self, context):
+    if self.move_active_multi:
+        self.move_active_type = "multi"
+        self.move_active_single = False
+        bpy.ops.mio3sk.move_set_primary()
+    else:
+        bpy.ops.mio3sk.move_remove_primary()
+
+
 class MIO3SK_scene_props(PropertyGroup):
     sync_active_shapekey_enabled: bpy.props.BoolProperty(
         default=False, update=callback_sync_active_shapekey_enabled
@@ -42,6 +65,18 @@ class MIO3SK_scene_props(PropertyGroup):
         default="_head",
         items=[(k, f"{l} / {r}", "") for (k, l, r) in lr_suffix_types_source],
     )
+
+    move_active_single: bpy.props.BoolProperty(update=callback_move_active_single)
+    move_active_multi: bpy.props.BoolProperty(update=callback_move_active_multi)
+    move_active_type: bpy.props.EnumProperty(
+        default="single",
+        items=[("single","single",""),("multi","multi","")],
+    )
+    move_primary: bpy.props.StringProperty()
+    move_primary_auto: bpy.props.BoolProperty()
+
+    sort_priority: bpy.props.BoolProperty()
+    sort_priority_mute: bpy.props.BoolProperty()
 
 
 class MIO3SK_props(bpy.types.PropertyGroup):
@@ -106,17 +141,25 @@ classes = [
     MIO3SK_scene_props,
     MIO3SK_props,
     MIO3SK_PT_main,
+    MIO3SK_PT_sub_move,
+    MIO3SK_PT_sub_sort,
     MIO3SK_PT_sub_options,
     MIO3SK_MT_context,
     MIO3SK_UL_shape_keys,
     MIO3SK_OT_some_file,
     MIO3SK_OT_add_preset,
     MIO3SK_OT_fill_keys,
+    MIO3SK_OT_move_set_primary,
+    MIO3SK_OT_move_remove_primary,
+    MIO3SK_OT_move,
+    MIO3SK_OT_sort,
+    MIO3SK_OT_reset,
 ]
 
 
 def register():
     register_translations(__name__)
+    register_icons()
     for c in classes:
         bpy.utils.register_class(c)
     bpy.types.Scene.mio3sk = bpy.props.PointerProperty(type=MIO3SK_scene_props)
@@ -134,6 +177,7 @@ def unregister():
     del bpy.types.Scene.mio3sk
     del bpy.types.Object.mio3sksync
     remove_translations(__name__)
+    remove_icons()
 
 
 if __name__ == "__main__":

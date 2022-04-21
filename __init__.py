@@ -70,7 +70,7 @@ class MIO3SK_scene_props(PropertyGroup):
     move_active_multi: bpy.props.BoolProperty(update=callback_move_active_multi)
     move_active_type: bpy.props.EnumProperty(
         default="single",
-        items=[("single","single",""),("multi","multi","")],
+        items=[("single", "single", ""), ("multi", "multi", "")],
     )
     move_primary: bpy.props.StringProperty()
     move_primary_auto: bpy.props.BoolProperty()
@@ -87,6 +87,10 @@ class MIO3SK_props(bpy.types.PropertyGroup):
 
 def callback_update_shapekey():
     sync_shapekey_value()
+
+
+def callback_show_only_shape_key():
+    sync_show_only_shape_key()
 
 
 def callback_rename_shapekey():
@@ -114,6 +118,12 @@ def register_msgbus():
         owner=msgbus_owner,
         args=(),
         notify=callback_update_shapekey,
+    )
+    bpy.msgbus.subscribe_rna(
+        key=(bpy.types.Object, "show_only_shape_key"),
+        owner=msgbus_owner,
+        args=(),
+        notify=callback_show_only_shape_key,
     )
 
     if load_handler not in bpy.app.handlers.load_post:

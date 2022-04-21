@@ -17,6 +17,15 @@ def sync_shapekey_value():
                         item_key.value = key_blocks[item_key.name].value
 
 
+def sync_show_only_shape_key():
+    object = bpy.context.object
+    prop_o = object.mio3sksync
+    if is_sync_collection(object):
+        for item in [v for v in prop_o.syncs.objects if has_shapekey(v) and v != object]:
+            if item.show_only_shape_key != object.show_only_shape_key:
+                item.show_only_shape_key = object.show_only_shape_key
+
+
 msgbus_owner_sync_active_shape_key = object()
 
 

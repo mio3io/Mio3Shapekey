@@ -61,11 +61,14 @@ def sync_active_shape_key():
 # アクティブキーが同期していること
 def sync_rename():
     object = bpy.context.object
+    prop_s = bpy.context.scene.mio3sk
     prop_o = object.mio3sksync
+    lastkey = prop_s.lastkey
     if is_sync_collection(object):
         for elem in [o for o in prop_o.syncs.objects if has_shapekey(o) and o != object]:
-            if elem.active_shape_key_index != 0:
-                elem.active_shape_key.name = object.active_shape_key.name
+            index = elem.data.shape_keys.key_blocks.find(lastkey)
+            if index > 0:
+                elem.data.shape_keys.key_blocks[index].name = object.active_shape_key.name
 
 
 msgbus_owner_auto_active_mirror_edit = object()

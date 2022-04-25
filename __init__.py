@@ -57,6 +57,8 @@ def callback_move_active_multi(self, context):
 
 
 class MIO3SK_scene_props(PropertyGroup):
+    lastkey: bpy.props.StringProperty()
+
     sync_active_shapekey_enabled: bpy.props.BoolProperty(
         default=False, update=callback_sync_active_shapekey_enabled
     )
@@ -98,8 +100,7 @@ def callback_rename_shapekey():
 
 
 def callback_active_shapekey():
-    pass
-
+    bpy.context.scene.mio3sk.lastkey = str(bpy.context.object.active_shape_key.name)
 
 msgbus_owner = object()
 
@@ -124,6 +125,12 @@ def register_msgbus():
         owner=msgbus_owner,
         args=(),
         notify=callback_show_only_shape_key,
+    )
+    bpy.msgbus.subscribe_rna(
+        key=(bpy.types.Object, "active_shape_key_index"),
+        owner=msgbus_owner,
+        args=(),
+        notify=callback_active_shapekey,
     )
 
     if load_handler not in bpy.app.handlers.load_post:

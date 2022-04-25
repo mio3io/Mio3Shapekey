@@ -37,12 +37,12 @@ def register_active_shape_key():
         args=(),
         notify=sync_active_shape_key,
     )
-    bpy.msgbus.subscribe_rna(
-        key=(bpy.types.ShapeKey, "name"),
-        owner=msgbus_owner_sync_active_shape_key,
-        args=(),
-        notify=sync_rename,
-    )
+    # bpy.msgbus.subscribe_rna(
+    #     key=(bpy.types.ShapeKey, "name"),
+    #     owner=msgbus_owner_sync_active_shape_key,
+    #     args=(),
+    #     notify=sync_rename,
+    # )
 
 
 def unregister_active_shape_key():

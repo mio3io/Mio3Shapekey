@@ -8,7 +8,7 @@ from .op_util import *
 
 # ファイルの読み込み
 class MIO3SK_OT_some_file(Operator, ImportHelper):
-    bl_idname = "mio3ss.add_file"
+    bl_idname = "mio3sk.add_file"
     bl_label = "Import"
     bl_description = "Add: Import CSV"
     bl_options = {"REGISTER", "UNDO"}
@@ -37,7 +37,7 @@ class MIO3SK_OT_some_file(Operator, ImportHelper):
 
 # プリセットの読み込み
 class MIO3SK_OT_add_preset(Operator):
-    bl_idname = "mio3ss.add_preset"
+    bl_idname = "mio3sk.add_preset"
     bl_label = "Import"
     bl_description = "Add: from presets"
     bl_options = {"REGISTER", "UNDO"}
@@ -66,7 +66,7 @@ class MIO3SK_OT_add_preset(Operator):
 
 # コレクション内で使用されているキーをすべて作成
 class MIO3SK_OT_fill_keys(Operator):
-    bl_idname = "mio3ss.fill_keys"
+    bl_idname = "mio3sk.fill_keys"
     bl_label = "Fill shapekeys from collection"
     bl_description = "Fill shapekeys from collection"
     bl_options = {"REGISTER", "UNDO"}

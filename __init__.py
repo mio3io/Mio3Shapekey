@@ -24,14 +24,6 @@ bl_info = {
 }
 
 
-def callback_sync_active_shapekey_enabled(self, context):
-    if self.sync_active_shapekey_enabled:
-        register_active_shape_key()
-        sync_active_shape_key()
-    else:
-        unregister_active_shape_key()
-
-
 def callback_xmirror_auto_enabled(self, context):
     if self.xmirror_auto_enabled:
         register_auto_active_mirror_edit()
@@ -60,9 +52,7 @@ def callback_move_active_multi(self, context):
 class MIO3SK_scene_props(PropertyGroup):
     lastkey: bpy.props.StringProperty()
 
-    sync_active_shapekey_enabled: bpy.props.BoolProperty(
-        default=False, update=callback_sync_active_shapekey_enabled
-    )
+    sync_active_shapekey_enabled: bpy.props.BoolProperty(default=True)
     xmirror_auto_enabled: bpy.props.BoolProperty(default=False, update=callback_xmirror_auto_enabled)
     xmirror_auto_suffix_type: bpy.props.EnumProperty(
         default="_head",
@@ -101,7 +91,11 @@ def callback_rename_shapekey():
 
 
 def callback_active_shapekey():
-    bpy.context.scene.mio3sk.lastkey = str(bpy.context.object.active_shape_key.name)
+    prop_s = bpy.context.scene.mio3sk
+    if prop_s.sync_active_shapekey_enabled:
+        sync_active_shape_key()
+    prop_s.lastkey = str(bpy.context.object.active_shape_key.name)
+
 
 msgbus_owner = object()
 
@@ -141,12 +135,9 @@ def register_msgbus():
         prop_s = bpy.context.scene.mio3sk
         if prop_s.xmirror_auto_enabled:
             register_auto_active_mirror_edit()
-        if prop_s.sync_active_shapekey_enabled:
-            register_active_shape_key()
     else:
         # Default=True
         # register_auto_active_mirror_edit()
-        # register_active_shape_key()
         pass
 
 
@@ -188,7 +179,6 @@ def register():
 
 def unregister():
     bpy.app.handlers.load_post.remove(load_handler)
-    unregister_active_shape_key()
     unregister_auto_active_mirror_edit()
     bpy.msgbus.clear_by_owner(msgbus_owner)
     for c in classes:

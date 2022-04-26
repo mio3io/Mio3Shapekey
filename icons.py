@@ -1,5 +1,6 @@
 import os
 import bpy
+import bpy.utils.previews
 
 ICON_DIR = os.path.join(os.path.dirname(__file__), "icons")
 icons = bpy.utils.previews.new()

@@ -10,6 +10,7 @@ from .op_add_shapekey import *
 from .op_move_shapekey import *
 from .op_sort_shapekey import *
 from .op_reset_shapekey import *
+from .op_remove_shapekey import *
 
 bl_info = {
     "name": "Mio3 ShapeKey",
@@ -171,6 +172,7 @@ classes = [
     MIO3SK_OT_move,
     MIO3SK_OT_sort,
     MIO3SK_OT_reset,
+    MIO3SK_OT_remove_shapekey,
 ]
 
 

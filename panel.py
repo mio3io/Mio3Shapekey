@@ -10,6 +10,7 @@ from .op_add_shapekey import *
 from .op_move_shapekey import *
 from .op_sort_shapekey import *
 from .op_reset_shapekey import *
+from .op_remove_shapekey import *
 
 
 class MIO3SK_PT_main(Panel):
@@ -202,6 +203,12 @@ class MIO3SK_MT_context(bpy.types.Menu):
             MIO3SK_OT_sort.bl_idname,
             text=pgettext("名前でソート（降順）"),
         ).type = "desc"
+
+        layout.separator()
+        layout.operator(
+            MIO3SK_OT_remove_shapekey.bl_idname,
+            text=pgettext("無効化を除くシェイプキーを削除"),
+        )
 
         layout.separator()
         layout.operator(

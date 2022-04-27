@@ -92,10 +92,10 @@ class MIO3SK_PT_sub_move(Panel):
             text="選択中のキーを移動" if not prop_s.move_active_single else "クリックしたキーの下に移動",
             icon_value=icons["MOVE"].icon_id,
         )
-        row.enabled = context.object.mode == "EDIT"
+        row.enabled = context.object.mode == "OBJECT"
 
         row = layout.row()
-        row.enabled = context.object.mode == "EDIT"
+        row.enabled = context.object.mode == "OBJECT"
         row.row().prop(
             prop_s,
             "move_active_multi",

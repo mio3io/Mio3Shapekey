@@ -5,7 +5,9 @@
 
 ## 入手方法
 
-[Code > Download ZIP](https://github.com/mio3io/Mio3ShapekeySync/archive/master.zip) から ZIP ファイルをダウンロードしてください。
+安定版はリリースページからダウンロードしてください。
+
+最新版は [Code > Download ZIP](https://github.com/mio3io/Mio3ShapekeySync/archive/master.zip) または Dev ブランチから ZIP ファイルをダウンロードしてください。
 
 ## 機能
 

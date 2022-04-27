@@ -55,8 +55,8 @@ def unregister_auto_active_mirror_edit():
 def auto_active_mirror_edit():
     object = bpy.context.object
     prop_s = bpy.context.scene.mio3sk
-    lr_suffix = lr_suffix_types.get(prop_s.xmirror_auto_suffix_type)
     if prop_s.xmirror_auto_enabled and bpy.context.active_object.mode == "EDIT":
+        lr_suffix = lr_suffix_types.get(prop_s.xmirror_auto_suffix_type)
         trim_l = object.active_shape_key.name[-lr_suffix[1] :]
         trim_r = object.active_shape_key.name[-lr_suffix[3] :]
         if trim_l == lr_suffix[0] or trim_r == lr_suffix[2]:

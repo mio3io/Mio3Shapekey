@@ -19,7 +19,7 @@ class MIO3SK_OT_sort(Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.object is not None and context.object.type in OBJECT_TYPES
+        return context.object is not None and context.object.type in OBJECT_TYPES and context.object.mode == "EDIT"
 
     def execute(self, context):
         object = context.object

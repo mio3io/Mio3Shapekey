@@ -85,14 +85,18 @@ class MIO3SK_PT_sub_move(Panel):
         prop_s = context.scene.mio3sk
         layout = self.layout
 
-        layout.row().prop(
+        row = layout.row()
+        row.row().prop(
             prop_s,
             "move_active_single",
             text="選択中のキーを移動" if not prop_s.move_active_single else "クリックしたキーの下に移動",
             icon_value=icons["MOVE"].icon_id,
         )
+        row.enabled = context.object.mode == "EDIT"
 
-        layout.row().prop(
+        row = layout.row()
+        row.enabled = context.object.mode == "EDIT"
+        row.row().prop(
             prop_s,
             "move_active_multi",
             text=" 選択中のキーの下に複数移動" if not prop_s.move_active_multi else "移動するキーを順番にクリック",

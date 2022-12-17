@@ -17,7 +17,7 @@ from .op_rename_shapekey import *
 bl_info = {
     "name": "Mio3 ShapeKey",
     "author": "mio3io",
-    "version": (2, 5, 0),
+    "version": (2, 5, 1),
     "blender": (3, 0, 0),
     "warning": "",
     "location": "View3D > Sidebar",

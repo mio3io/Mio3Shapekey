@@ -7,10 +7,11 @@ from .icons import *
 from .op_util import *
 from .op_sync_shapekey import *
 from .op_add_shapekey import *
+from .op_remove_shapekey import *
 from .op_move_shapekey import *
 from .op_sort_shapekey import *
 from .op_reset_shapekey import *
-from .op_remove_shapekey import *
+from .op_rename_shapekey import *
 
 
 class MIO3SK_PT_main(Panel):
@@ -134,6 +135,56 @@ class MIO3SK_PT_sub_sort(Panel):
 
         layout.row().prop(prop_s, "sort_priority", text="vrc* をトップに維持する")
         layout.row().prop(prop_s, "sort_priority_mute", text="無効化中のキーをトップに維持する")
+
+
+class MIO3SK_PT_sub_rename(Panel):
+    bl_label = "選択中のシェイプキー名の変更"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Item"
+    bl_parent_id = "MIO3SK_PT_main"
+    bl_options = {"DEFAULT_CLOSED"}
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def draw(self, context):
+        prop_s = context.scene.mio3sk
+        layout = self.layout
+
+        layout.prop(context.object.active_shape_key, "name", text="現在の名前", emboss=False)
+        layout.prop(prop_s, "rename_inputname", text="新しい名前")
+        layout.prop(prop_s, "rename_sync_collections", text="同期コレクションも変更")
+        layout.operator(MIO3SK_OT_rename.bl_idname, text="変更")
+
+
+class MIO3SK_PT_sub_replace(Panel):
+    bl_label = "シェイプキー名の置換"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Item"
+    bl_parent_id = "MIO3SK_PT_main"
+    bl_options = {"DEFAULT_CLOSED"}
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def draw(self, context):
+        prop_s = context.scene.mio3sk
+        layout = self.layout
+
+        layout.separator()
+        layout.prop(prop_s, "rename_search", text="Search")
+        layout.prop(prop_s, "rename_replace", text="置換")
+        row = layout.row()
+        row.prop(prop_s, "rename_regex", text="正規表現")
+        row.scale_x=0.5
+        op = row.operator('wm.url_open', text="構文", icon="URL")
+        op.url = "https://docs.python.org/3/library/re.html"
+        layout.prop(prop_s, "rename_replace_sync_collections", text="同期コレクションも変更")
+        layout.operator(MIO3SK_OT_replace.bl_idname, text="置換")
 
 
 class MIO3SK_PT_sub_options(Panel):

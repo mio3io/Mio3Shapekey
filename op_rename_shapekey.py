@@ -57,7 +57,7 @@ class MIO3SK_OT_replace(Operator):
 
         if prop_s.rename_search:
 
-            unregister_active_shape_key()
+            stash = StashProp(prop_s, "sync_active_shapekey_enabled", False)
 
             rep_func = rep_func_regex if prop_s.rename_regex else rep_func_replace
             targets = (
@@ -73,8 +73,7 @@ class MIO3SK_OT_replace(Operator):
                         self.report({"WARNING"}, "正規表現が正しくありません")
                         break
 
-            if prop_s.sync_active_shapekey_enabled:
-                register_active_shape_key()
+            stash.rollback()
 
         return {"FINISHED"}
 

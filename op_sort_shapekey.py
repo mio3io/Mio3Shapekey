@@ -30,7 +30,7 @@ class MIO3SK_OT_sort(Operator):
 
         # ToDo 除外方法をリスト方式に変更する
         if prop_s.sort_priority:
-            target_blocks = [key for key in target_blocks if key.name[:1] != "_" and key.name[:4] != "vrc." and key.name[:5] != "body_"]
+            target_blocks = [key for key in target_blocks if key.name[:3] != "vrc"]
         if prop_s.sort_priority_mute:
             target_blocks = [key for key in target_blocks if key.mute == False]
 

@@ -27,6 +27,7 @@ class MIO3SK_OT_some_file(Operator, ImportHelper):
 
     def execute(self, context):
         # context, self.filepath, self.use_setting
+        initShapeKey(context)
         with open(self.filepath) as f:
             reader = csv.reader(f)
             for row in reader:
@@ -56,6 +57,7 @@ class MIO3SK_OT_add_preset(Operator):
         return context.object is not None and context.object.type in OBJECT_TYPES
 
     def execute(self, context):
+        initShapeKey(context)
         file = os.path.join(TEMPLATE_DIR, self.type + ".csv")
         with open(file) as f:
             reader = csv.reader(f)
@@ -95,3 +97,8 @@ def addNewKey(keyname, context):
     if keyname in context.object.data.shape_keys.key_blocks:
         return
     context.object.shape_key_add(name=keyname, from_mix=False)
+
+
+def initShapeKey(context):
+    if context.object.data.shape_keys is None:
+        bpy.ops.object.shape_key_add(from_mix=False)

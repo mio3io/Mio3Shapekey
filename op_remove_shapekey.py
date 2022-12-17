@@ -12,7 +12,12 @@ class MIO3SK_OT_remove_shapekey(Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.object is not None and context.object.type in OBJECT_TYPES and context.object.mode == "OBJECT"
+        return (
+            context.object is not None
+            and context.object.type in OBJECT_TYPES
+            and context.object.mode == "OBJECT"
+            and context.object.active_shape_key is not None
+        )
 
     def execute(self, context):
         object = context.object

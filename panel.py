@@ -1,4 +1,3 @@
-from cgitb import enable
 import bpy
 from bpy.types import Panel, UIList
 from bpy.app.translations import pgettext
@@ -17,7 +16,7 @@ from .op_rename_shapekey import *
 class MIO3SK_PT_main(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_category = "Item"
+    bl_category = "Tool"
     bl_label = "Mio3 ShapeKey"
 
     @classmethod
@@ -25,7 +24,6 @@ class MIO3SK_PT_main(Panel):
         return (
             context.object is not None
             and context.object.type in OBJECT_TYPES
-            and context.object.active_shape_key is not None
         )
 
     def draw(self, context):
@@ -35,40 +33,74 @@ class MIO3SK_PT_main(Panel):
 
         layout = self.layout
 
-        row = layout.row(align=True)
+        # 同期コレクション
+        row = layout.row()
         row.label(text="Sync Collection")
         row.prop(prop_o, "syncs", text="")
 
-        collection_keys = []
+        # コンテキストメニュー
+        row.menu("MIO3SK_MT_context", icon="DOWNARROW_HLT", text="")
 
-        layout.template_list(
+
+        row = layout.row()
+
+        # シェイプキーリスト
+        row.template_list(
             "MIO3SK_UL_shape_keys",
             "",
             shape_keys,
             "key_blocks",
             object,
             "active_shape_key_index",
-            rows=3,
+            rows=5,
         )
+        col = row.column(align=True)
 
-        if prop_o.syncs is not None:
-            for cobj in [o for o in prop_o.syncs.objects if has_shapekey(o)]:
-                for ckey in cobj.data.shape_keys.key_blocks:
-                    collection_keys.append(ckey.name)
+        col.operator("object.shape_key_add", icon='ADD', text="").from_mix = False
+        col.operator("object.shape_key_remove", icon='REMOVE', text="").all = False
 
-        # シェイプキー数
-        row = layout.row()
-        row.label(text="Local:" + str(len(shape_keys.key_blocks)))
-        row.label(text="Collection:" + str(len(list(set(collection_keys)))))
-        # コンテキストメニュー
-        row.menu("MIO3SK_MT_context", icon="DOWNARROW_HLT", text="")
+        col.separator()
 
-        row = layout.row(align=True)
-        row.scale_x = 1.8
-        row.label(text="形状をリセット")
-        row.scale_x = 1
-        row.operator(MIO3SK_OT_reset.bl_idname, text="全て").type = "all"
-        row.operator(MIO3SK_OT_reset.bl_idname, text="選択").type = "select"
+        col.menu("MESH_MT_shape_key_context_menu", icon='DOWNARROW_HLT', text="")
+
+        if context.object.active_shape_key:
+            col.separator()
+
+            sub = col.column(align=True)
+            sub.operator("object.shape_key_move", icon='TRIA_UP', text="").type = 'UP'
+            sub.operator("object.shape_key_move", icon='TRIA_DOWN', text="").type = 'DOWN'
+
+            row = layout.row()
+
+            # シェイプキー数表示
+            collection_keys = []
+            if prop_o.syncs is not None:
+                for cobj in [o for o in prop_o.syncs.objects if has_shapekey(o)]:
+                    for ckey in cobj.data.shape_keys.key_blocks:
+                        collection_keys.append(ckey.name)
+            # シェイプキー数
+            row.label(text="Local:" + str(len(shape_keys.key_blocks)))
+            row.label(text="Collection:" + str(len(list(set(collection_keys)))))
+
+            row.alignment = 'RIGHT'
+            sub = row.row(align=True)
+            sub.prop(object, "show_only_shape_key", text="")
+            sub.prop(object, "use_shape_key_edit_mode", text="")
+
+            sub = row.row()
+            if shape_keys.use_relative:
+                sub.operator("object.shape_key_clear", icon='X', text="")
+            else:
+                sub.operator("object.shape_key_retime", icon='RECOVER_LAST', text="")
+
+            layout.separator()
+
+            row = layout.row(align=True)
+            row.scale_x = 1.8
+            row.label(text="形状をリセット")
+            row.scale_x = 1
+            row.operator(MIO3SK_OT_reset.bl_idname, text="全ての頂点").type = "all"
+            row.operator(MIO3SK_OT_reset.bl_idname, text="選択中の頂点").type = "select"
 
 
 class MIO3SK_PT_sub_move(Panel):
@@ -80,7 +112,7 @@ class MIO3SK_PT_sub_move(Panel):
 
     @classmethod
     def poll(cls, context):
-        return True
+        return context.object.active_shape_key is not None
 
     def draw(self, context):
         prop_s = context.scene.mio3sk
@@ -114,7 +146,7 @@ class MIO3SK_PT_sub_sort(Panel):
 
     @classmethod
     def poll(cls, context):
-        return True
+        return context.object.active_shape_key is not None
 
     def draw(self, context):
         prop_s = context.scene.mio3sk
@@ -147,7 +179,7 @@ class MIO3SK_PT_sub_rename(Panel):
 
     @classmethod
     def poll(cls, context):
-        return True
+        return context.object.active_shape_key is not None
 
     def draw(self, context):
         prop_s = context.scene.mio3sk
@@ -169,7 +201,7 @@ class MIO3SK_PT_sub_replace(Panel):
 
     @classmethod
     def poll(cls, context):
-        return True
+        return context.object.active_shape_key is not None
 
     def draw(self, context):
         prop_s = context.scene.mio3sk

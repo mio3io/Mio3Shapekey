@@ -38,7 +38,7 @@ class MIO3SK_OT_move_remove_primary(Operator):
     bl_idname = "mio3sk.move_remove_primary"
     bl_label = "Set Move"
     bl_description = "Set Move"
-    bl_options = {"REGISTER", "UNDO"}
+    bl_options = {"REGISTER", "UNDO", "INTERNAL"}
 
     @classmethod
     def poll(cls, context):
@@ -57,7 +57,7 @@ class MIO3SK_OT_move(Operator):
     bl_idname = "mio3sk.move"
     bl_label = "シェイプキーを移動"
     bl_description = "シェイプキーを移動"
-    bl_options = {"REGISTER", "UNDO"}
+    bl_options = {"REGISTER", "UNDO", "INTERNAL"}
 
     @classmethod
     def poll(cls, context):

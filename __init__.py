@@ -55,10 +55,10 @@ class MIO3SK_scene_props(PropertyGroup):
 
     sync_active_shapekey_enabled: bpy.props.BoolProperty(default=True)
     xmirror_auto_enabled: bpy.props.BoolProperty(default=False, update=callback_xmirror_auto_enabled)
-    xmirror_auto_suffix_type: bpy.props.EnumProperty(
-        default="_head",
-        items=[(k, f"{l} / {r}", "") for (k, l, r) in lr_suffix_types_source],
-    )
+    # xmirror_auto_suffix_type: bpy.props.EnumProperty(
+    #     default="_head",
+    #     items=[(k, f"{l} / {r}", "") for (k, l, r) in lr_suffix_types_source],
+    # )
 
     move_active_single: bpy.props.BoolProperty(update=callback_move_active_single)
     move_active_multi: bpy.props.BoolProperty(update=callback_move_active_multi)

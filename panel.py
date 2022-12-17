@@ -96,7 +96,7 @@ class MIO3SK_PT_main(Panel):
             layout.separator()
 
             row = layout.row(align=True)
-            row.scale_x = 1.8
+            row.scale_x = 1.2
             row.label(text="形状をリセット")
             row.scale_x = 1
             row.operator(MIO3SK_OT_reset.bl_idname, text="全ての頂点").type = "all"
@@ -237,9 +237,6 @@ class MIO3SK_PT_sub_options(Panel):
         row.prop(prop_s, "sync_active_shapekey_enabled", text="選択を同期")
         row = layout.row()
         row.prop(prop_s, "xmirror_auto_enabled", text="Xミラー編集の自動切り替え")
-        row = layout.row()
-        row.label(text="L/R接尾辞タイプ")
-        row.prop(prop_s, "xmirror_auto_suffix_type", text="")
 
 
 class MIO3SK_UL_shape_keys(UIList):

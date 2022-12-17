@@ -56,13 +56,14 @@ def auto_active_mirror_edit():
     object = bpy.context.object
     prop_s = bpy.context.scene.mio3sk
     if prop_s.xmirror_auto_enabled and bpy.context.active_object.mode == "EDIT":
-        lr_suffix = lr_suffix_types.get(prop_s.xmirror_auto_suffix_type)
-        trim_l = object.active_shape_key.name[-lr_suffix[1] :]
-        trim_r = object.active_shape_key.name[-lr_suffix[3] :]
-        if trim_l == lr_suffix[0] or trim_r == lr_suffix[2]:
-            object.data.use_mirror_x = False
-        else:
-            object.data.use_mirror_x = True
+
+        object.data.use_mirror_x = True
+        for lr_suffix in lr_suffix_types.values():
+            trim_l = object.active_shape_key.name[-lr_suffix[1] :]
+            trim_r = object.active_shape_key.name[-lr_suffix[3] :]
+            if trim_l == lr_suffix[0] or trim_r == lr_suffix[2]:
+                object.data.use_mirror_x = False
+                break
 
         for win in bpy.context.window_manager.windows:
             [area.tag_redraw() for area in win.screen.areas if area.type in {"VIEW_3D"}]

@@ -97,14 +97,14 @@ class MIO3SK_PT_main(Panel):
 
             row = layout.row(align=True)
             row.scale_x = 1.2
-            row.label(text="形状をリセット")
+            row.label(text="Reset Shape")
             row.scale_x = 1
-            row.operator(MIO3SK_OT_reset.bl_idname, text="全ての頂点").type = "all"
-            row.operator(MIO3SK_OT_reset.bl_idname, text="選択中の頂点").type = "select"
+            row.operator(MIO3SK_OT_reset.bl_idname, text=pgettext("All Vertices")).type = "all"
+            row.operator(MIO3SK_OT_reset.bl_idname, text=pgettext("Active Vertices")).type = "select"
 
 
 class MIO3SK_PT_sub_move(Panel):
-    bl_label = "移動"
+    bl_label = "Move"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Item"
@@ -122,7 +122,7 @@ class MIO3SK_PT_sub_move(Panel):
         row.row().prop(
             prop_s,
             "move_active_single",
-            text="選択中のキーを移動" if not prop_s.move_active_single else "クリックしたキーの下に移動",
+            text="Move active ShapeKey" if not prop_s.move_active_single else "Move below the key you clicked",
             icon_value=icons["MOVE"].icon_id,
         )
         row.enabled = context.object.mode == "OBJECT"
@@ -132,13 +132,13 @@ class MIO3SK_PT_sub_move(Panel):
         row.row().prop(
             prop_s,
             "move_active_multi",
-            text=" 選択中のキーの下に複数移動" if not prop_s.move_active_multi else "移動するキーを順番にクリック",
+            text="Move below active ShapeKey (Multiple)" if not prop_s.move_active_multi else "Click the keys in order to move",
             icon_value=icons["MOVE"].icon_id,
         )
 
 
 class MIO3SK_PT_sub_sort(Panel):
-    bl_label = "ソート"
+    bl_label = "Sort"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Item"
@@ -153,24 +153,24 @@ class MIO3SK_PT_sub_sort(Panel):
         layout = self.layout
 
         row = layout.row()
-        row.label(text="名前でソート")
+        row.label(text="Sort by ShapeKey Name")
 
         row = layout.row(align=True)
         row.operator(
             MIO3SK_OT_sort.bl_idname,
-            text=pgettext("昇順"),
+            text=pgettext("ASC"),
         ).type = "asc"
         row.operator(
             MIO3SK_OT_sort.bl_idname,
-            text=pgettext("降順"),
+            text=pgettext("DESC"),
         ).type = "desc"
 
-        layout.row().prop(prop_s, "sort_priority", text="vrc* をトップに維持する")
-        layout.row().prop(prop_s, "sort_priority_mute", text="無効化中のキーをトップに維持する")
+        layout.row().prop(prop_s, "sort_priority", text="Pinned vrc.* keys")
+        layout.row().prop(prop_s, "sort_priority_mute", text="Pinned Mute keys")
 
 
 class MIO3SK_PT_sub_rename(Panel):
-    bl_label = "選択中のシェイプキー名の変更"
+    bl_label = "Rename (sync)"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Item"
@@ -185,14 +185,14 @@ class MIO3SK_PT_sub_rename(Panel):
         prop_s = context.scene.mio3sk
         layout = self.layout
 
-        layout.prop(context.object.active_shape_key, "name", text="現在の名前", emboss=False)
-        layout.prop(prop_s, "rename_inputname", text="新しい名前")
-        layout.prop(prop_s, "rename_sync_collections", text="同期コレクションも変更")
-        layout.operator(MIO3SK_OT_rename.bl_idname, text="変更")
+        layout.prop(context.object.active_shape_key, "name", text="Current Name", emboss=False)
+        layout.prop(prop_s, "rename_inputname", text="New Name")
+        layout.prop(prop_s, "rename_sync_collections", text="Change other sync objects")
+        layout.operator(MIO3SK_OT_rename.bl_idname, text="Rename")
 
 
 class MIO3SK_PT_sub_replace(Panel):
-    bl_label = "シェイプキー名の置換"
+    bl_label = "Replace Names (sync)"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Item"
@@ -209,14 +209,14 @@ class MIO3SK_PT_sub_replace(Panel):
 
         layout.separator()
         layout.prop(prop_s, "rename_search", text="Search")
-        layout.prop(prop_s, "rename_replace", text="置換")
+        layout.prop(prop_s, "rename_replace", text="Replace")
         row = layout.row()
-        row.prop(prop_s, "rename_regex", text="正規表現")
+        row.prop(prop_s, "rename_regex", text="Use Regex")
         row.scale_x=0.5
-        op = row.operator('wm.url_open', text="構文", icon="URL")
+        op = row.operator('wm.url_open', text=pgettext("Syntax"), icon="URL")
         op.url = "https://docs.python.org/3/library/re.html"
-        layout.prop(prop_s, "rename_replace_sync_collections", text="同期コレクションも変更")
-        layout.operator(MIO3SK_OT_replace.bl_idname, text="置換")
+        layout.prop(prop_s, "rename_replace_sync_collections", text="Change other sync objects")
+        layout.operator(MIO3SK_OT_replace.bl_idname, text="Replace")
 
 
 class MIO3SK_PT_sub_options(Panel):
@@ -234,9 +234,9 @@ class MIO3SK_PT_sub_options(Panel):
         prop_s = context.scene.mio3sk
         layout = self.layout
         row = layout.row()
-        row.prop(prop_s, "sync_active_shapekey_enabled", text="選択を同期")
+        row.prop(prop_s, "sync_active_shapekey_enabled", text="Sync Active ShapeKey")
         row = layout.row()
-        row.prop(prop_s, "xmirror_auto_enabled", text="Xミラー編集の自動切り替え")
+        row.prop(prop_s, "xmirror_auto_enabled", text="Auto X Mirror Switching")
 
 
 class MIO3SK_UL_shape_keys(UIList):
@@ -281,17 +281,17 @@ class MIO3SK_MT_context(bpy.types.Menu):
 
         layout.operator(
             MIO3SK_OT_sort.bl_idname,
-            text=pgettext("名前でソート（昇順）"),
+            text=pgettext("Sort ASC"),
         ).type = "asc"
         layout.operator(
             MIO3SK_OT_sort.bl_idname,
-            text=pgettext("名前でソート（降順）"),
+            text=pgettext("Sort DESC"),
         ).type = "desc"
 
         layout.separator()
         layout.operator(
             MIO3SK_OT_remove_shapekey.bl_idname,
-            text=pgettext("無効化を除くシェイプキーを削除"),
+            text=pgettext("Delete shape key except disable"),
         )
 
         layout.separator()

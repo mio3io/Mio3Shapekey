@@ -5,8 +5,8 @@ from .define import *
 
 class MIO3SK_OT_reset(Operator):
     bl_idname = "mio3sk.reset"
-    bl_label = "シェイプキーの形状をリセット"
-    bl_description = "シェイプキーの形状をリセット"
+    bl_label = "Reset ShapeKey"
+    bl_description = "Reset ShapeKey"
     bl_options = {"REGISTER", "UNDO"}
 
     type: bpy.props.EnumProperty(

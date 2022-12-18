@@ -8,8 +8,8 @@ from .op_sync_shapekey import *
 
 class MIO3SK_OT_rename(Operator):
     bl_idname = "mio3sk.rename"
-    bl_label = "rename"
-    bl_description = "rename"
+    bl_label = "Rename"
+    bl_description = "Rename (sync)"
     bl_options = {"REGISTER", "UNDO", "INTERNAL"}
 
     @classmethod
@@ -42,8 +42,8 @@ class MIO3SK_OT_rename(Operator):
 
 class MIO3SK_OT_replace(Operator):
     bl_idname = "mio3sk.replace"
-    bl_label = "replace"
-    bl_description = "replace"
+    bl_label = "Replace"
+    bl_description = "Replace Names (sync)"
     bl_options = {"REGISTER", "UNDO", "INTERNAL"}
 
     @classmethod
@@ -70,7 +70,7 @@ class MIO3SK_OT_replace(Operator):
                     try:
                         key.name = rep_func(key.name, prop_s.rename_search, prop_s.rename_replace)
                     except re.error:
-                        self.report({"WARNING"}, "正規表現が正しくありません")
+                        self.report({"WARNING"}, "Regular expression syntax is incorrect")
                         break
 
             stash.rollback()

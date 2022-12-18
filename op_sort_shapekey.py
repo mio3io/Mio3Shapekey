@@ -6,7 +6,7 @@ from .define import *
 class MIO3SK_OT_sort(Operator):
     bl_idname = "mio3sk.sort"
     bl_label = "Sort"
-    bl_description = ""
+    bl_description = "Sort by ShapeKey Name"
     bl_options = {"REGISTER", "UNDO"}
 
     type: bpy.props.EnumProperty(

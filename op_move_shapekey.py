@@ -55,8 +55,8 @@ class MIO3SK_OT_move_remove_primary(Operator):
 
 class MIO3SK_OT_move(Operator):
     bl_idname = "mio3sk.move"
-    bl_label = "シェイプキーを移動"
-    bl_description = "シェイプキーを移動"
+    bl_label = "Move ShapeKeys"
+    bl_description = "Move ShapeKeys"
     bl_options = {"REGISTER", "UNDO", "INTERNAL"}
 
     @classmethod

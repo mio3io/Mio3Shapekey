@@ -11,7 +11,7 @@
 
 ## 機能
 
-![](https://github.com/mio3io/resources/raw/Mio3ShapekeySync/Mio3ShapekeySync2022-12-18%20065121.png)
+![](https://github.com/mio3io/resources/raw/Mio3ShapekeySync/Mio3ShapekeySync2022-12-19%20060612.png)
 
 ### 同期コレクション
 

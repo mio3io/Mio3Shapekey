@@ -6,8 +6,8 @@ from .op_util import *
 
 class MIO3SK_OT_remove_shapekey(Operator):
     bl_idname = "mio3sk.remove_shapekey"
-    bl_label = "remove"
-    bl_description = "remove"
+    bl_label = "Remove"
+    bl_description = "Remove"
     bl_options = {"REGISTER", "UNDO", "INTERNAL"}
 
     @classmethod

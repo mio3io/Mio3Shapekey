@@ -7,9 +7,9 @@ class StashProp:
         self.prop = prop
         self.name = name
         self.tmp = getattr(prop, name, value)
-        setattr(prop, name, value)
+        setattr(self.prop, name, value)
 
-    def rollback(self):
+    def revert(self):
         setattr(self.prop, self.name, self.tmp)
 
 

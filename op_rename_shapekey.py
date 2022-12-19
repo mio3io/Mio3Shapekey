@@ -35,7 +35,7 @@ class MIO3SK_OT_rename(Operator):
             if index > 0:
                 obj.data.shape_keys.key_blocks[index].name = prop_s.rename_inputname
 
-        stash.rollback()
+        stash.revert()
 
         return {"FINISHED"}
 
@@ -73,7 +73,7 @@ class MIO3SK_OT_replace(Operator):
                         self.report({"WARNING"}, "Regular expression syntax is incorrect")
                         break
 
-            stash.rollback()
+            stash.revert()
 
         return {"FINISHED"}
 

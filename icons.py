@@ -18,6 +18,8 @@ def register_icons():
         icons.load("FACE_L", os.path.join(ICON_DIR, "face_left.png"), "IMAGE")
         icons.load("FACE_R", os.path.join(ICON_DIR, "face_right.png"), "IMAGE")
 
+        icons.load("PARENT", os.path.join(ICON_DIR, "parent.png"), "IMAGE")
+        icons.load("LINKED", os.path.join(ICON_DIR, "linked.png"), "IMAGE")
 
 def remove_icons():
     for pcoll in icons.values():

@@ -12,6 +12,7 @@ from .op_move_shapekey import *
 from .op_sort_shapekey import *
 from .op_reset_shapekey import *
 from .op_rename_shapekey import *
+from .op_propagate_shapekey import *
 
 
 bl_info = {
@@ -189,6 +190,7 @@ classes = [
     MIO3SK_OT_rename,
     MIO3SK_OT_replace,
     MIO3SK_OT_remove_shapekey,
+    MIO3SK_OT_propagate_to_basis,
 ]
 
 

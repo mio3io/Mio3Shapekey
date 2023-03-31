@@ -82,6 +82,9 @@ translation_dict = {
         ("*", "Auto X Mirror Switching"):
             "Xミラー編集の自動切り替え",
 
+        ("*", "Propagate to Basis(Selected Vertices)"):
+            "選択した頂点をBasisに反映",
+
     }
 }
 

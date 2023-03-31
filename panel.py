@@ -11,6 +11,7 @@ from .op_move_shapekey import *
 from .op_sort_shapekey import *
 from .op_reset_shapekey import *
 from .op_rename_shapekey import *
+from .op_propagate_shapekey import *
 
 
 class MIO3SK_PT_main(Panel):
@@ -278,6 +279,13 @@ class MIO3SK_MT_context(bpy.types.Menu):
 
     def draw(self, context):
         layout = self.layout
+
+        layout.separator()
+        layout.operator(
+            MIO3SK_OT_propagate_to_basis.bl_idname,
+            text=pgettext("Propagate to Basis(Selected Vertices)"),
+        )
+        layout.separator()
 
         layout.operator(
             MIO3SK_OT_sort.bl_idname,

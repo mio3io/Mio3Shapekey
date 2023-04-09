@@ -15,7 +15,7 @@ class MIO3SK_OT_add_key_current(Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.object is not None and context.object.type in OBJECT_TYPES and context.object.data.shape_keys is not None
+        return context.object is not None and context.object.type in OBJECT_TYPES and context.object.data.shape_keys is not None and context.active_object.mode == "OBJECT"
 
     def execute(self, context):
         object = context.object

@@ -6,6 +6,31 @@ from .define import *
 from .op_util import *
 
 
+# 選択しているキーの下に新しいキーを追加
+class MIO3SK_OT_add_key_current(Operator):
+    bl_idname = "mio3sk.add_key_current"
+    bl_label = "Add Shape Key"
+    bl_description = "Add: Shape Key at current position"
+    bl_options = {"REGISTER", "UNDO"}
+
+    @classmethod
+    def poll(cls, context):
+        return context.object is not None and context.object.type in OBJECT_TYPES and context.object.data.shape_keys is not None
+
+    def execute(self, context):
+        object = context.object
+        
+        base_idx = object.active_shape_key_index
+        move_idx = len(object.data.shape_keys.key_blocks)
+        object.active_shape_key_index = move_idx
+
+        bpy.ops.object.shape_key_add(from_mix=False)
+
+        [bpy.ops.object.shape_key_move(type="UP") for i in range(move_idx - base_idx - 1)]
+
+        return {"FINISHED"}
+
+
 # ファイルの読み込み
 class MIO3SK_OT_some_file(Operator, ImportHelper):
     bl_idname = "mio3sk.add_file"

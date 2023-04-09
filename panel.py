@@ -58,6 +58,7 @@ class MIO3SK_PT_main(Panel):
         col = row.column(align=True)
 
         col.operator("object.shape_key_add", icon='ADD', text="").from_mix = False
+        col.operator("MIO3SK_OT_add_key_current", icon='PLUS', text="")
         col.operator("object.shape_key_remove", icon='REMOVE', text="").all = False
 
         col.separator()
@@ -303,6 +304,10 @@ class MIO3SK_MT_context(bpy.types.Menu):
         )
 
         layout.separator()
+        layout.operator(
+            MIO3SK_OT_add_key_current.bl_idname,
+            text=pgettext("Add: Shape Key at current position"),
+        )
         layout.operator(
             MIO3SK_OT_add_preset.bl_idname,
             text=pgettext("Add: VRChat Viseme"),

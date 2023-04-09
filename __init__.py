@@ -180,6 +180,7 @@ classes = [
     MIO3SK_MT_context,
     MIO3SK_UL_shape_keys,
     MIO3SK_OT_some_file,
+    MIO3SK_OT_add_key_current,
     MIO3SK_OT_add_preset,
     MIO3SK_OT_fill_keys,
     MIO3SK_OT_move_set_primary,

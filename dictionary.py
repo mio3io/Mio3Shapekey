@@ -19,6 +19,8 @@ translation_dict = {
         ("*", "Syntax"):
             "構文",
 
+        ("*", "Add: Shape Key at current position"):
+            "現在の位置に新しいキーを追加",
         ("*", "Add: from presets"):
             "プリセットから追加",
         ("*", "Add: Import CSV"):

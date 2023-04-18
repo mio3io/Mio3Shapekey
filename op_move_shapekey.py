@@ -86,6 +86,8 @@ class MIO3SK_OT_move(Operator):
 
         if prop_s.move_active_type == "multi":
             prop_s.move_primary = secondary_key
+            if (len(key_blocks) > move_idx + 1):
+                object.active_shape_key_index = move_idx + 1
         else:
             prop_s.move_active_single = False
 

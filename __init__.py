@@ -18,7 +18,7 @@ from .op_propagate_shapekey import *
 bl_info = {
     "name": "Mio3 ShapeKey",
     "author": "mio3io",
-    "version": (2, 5, 3),
+    "version": (2, 5, 4),
     "blender": (3, 0, 0),
     "warning": "",
     "location": "View3D > Sidebar",

@@ -186,6 +186,7 @@ classes = [
     MIO3SK_OT_move_set_primary,
     MIO3SK_OT_move_remove_primary,
     MIO3SK_OT_move,
+    MIO3SK_OT_move_ex,
     MIO3SK_OT_sort,
     MIO3SK_OT_reset,
     MIO3SK_OT_rename,

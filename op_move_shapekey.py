@@ -1,5 +1,6 @@
 import bpy
 from bpy.types import Operator, Panel
+from bpy.app.translations import pgettext
 from .define import *
 from .icons import *
 
@@ -9,6 +10,43 @@ def callback_move_active_shapekey():
 
 
 move_msgbus_owner = object()
+
+
+class MIO3SK_OT_move_ex(Operator):
+    bl_idname = "mio3sk.move_ex"
+    bl_label = "シェイプキーを移動"
+    bl_description = "10個づつ移動する"
+    bl_options = {"REGISTER", "UNDO"}
+
+    type: bpy.props.EnumProperty(
+        default="UP",
+        items=[
+            ("UP", "UP", ""),
+            ("DOWN", "DOWN", ""),
+        ],
+    )
+
+    @classmethod
+    def poll(cls, context):
+        return context.object is not None and context.object.data.shape_keys is not None
+
+    def execute(self, context):
+        object = context.object
+
+        if self.type == "UP":
+            for i in range(10):
+                if object.active_shape_key_index <= 1:
+                    break
+                bpy.ops.object.shape_key_move(type="UP")
+        else:
+            count = len(object.data.shape_keys.key_blocks)
+            print(count)
+            for i in range(10):
+                if object.active_shape_key_index + 1 >= count:
+                    break
+                bpy.ops.object.shape_key_move(type="DOWN")
+
+        return {"FINISHED"}
 
 
 class MIO3SK_OT_move_set_primary(Operator):
@@ -108,6 +146,13 @@ class MIO3SK_PT_sub_move(Panel):
     def draw(self, context):
         prop_s = context.scene.mio3sk
         layout = self.layout
+
+        row = layout.row(align=True)
+
+        row.operator(MIO3SK_OT_move_ex.bl_idname, icon_value=icons["UP_EX"].icon_id, text="10").type = "UP"
+        row.operator("object.shape_key_move", icon="TRIA_UP", text="").type = "UP"
+        row.operator("object.shape_key_move", icon="TRIA_DOWN", text="").type = "DOWN"
+        row.operator(MIO3SK_OT_move_ex.bl_idname, icon_value=icons["DOWN_EX"].icon_id, text="10").type = "DOWN"
 
         row = layout.row()
         row.row().prop(

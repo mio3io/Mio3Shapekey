@@ -21,6 +21,9 @@ def register_icons():
         icons.load("PARENT", os.path.join(ICON_DIR, "parent.png"), "IMAGE")
         icons.load("LINKED", os.path.join(ICON_DIR, "linked.png"), "IMAGE")
 
+        icons.load("UP_EX", os.path.join(ICON_DIR, "arrow_up_ex.png"), "IMAGE")
+        icons.load("DOWN_EX", os.path.join(ICON_DIR, "arrow_down_ex.png"), "IMAGE")
+
 def remove_icons():
     for pcoll in icons.values():
         if pcoll in icons:

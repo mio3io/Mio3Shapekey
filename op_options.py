@@ -17,5 +17,3 @@ class MIO3SK_PT_sub_options(Panel):
         layout = self.layout
         row = layout.row()
         row.prop(prop_s, "sync_active_shapekey_enabled", text="Sync Active ShapeKey")
-        row = layout.row()
-        row.prop(prop_s, "xmirror_auto_enabled", text="Auto X Mirror Switching")

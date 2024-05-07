@@ -27,13 +27,6 @@ bl_info = {
 }
 
 
-def callback_xmirror_auto_enabled(self, context):
-    if self.xmirror_auto_enabled:
-        register_auto_active_mirror_edit()
-    else:
-        unregister_auto_active_mirror_edit()
-
-
 def callback_move_active_single(self, context):
     if self.move_active_single:
         self.move_active_type = "single"
@@ -55,11 +48,6 @@ def callback_move_active_multi(self, context):
 class MIO3SK_scene_props(PropertyGroup):
 
     sync_active_shapekey_enabled: bpy.props.BoolProperty(default=True)
-    xmirror_auto_enabled: bpy.props.BoolProperty(default=False, update=callback_xmirror_auto_enabled)
-    # xmirror_auto_suffix_type: bpy.props.EnumProperty(
-    #     default="_head",
-    #     items=[(k, f"{l} / {r}", "") for (k, l, r) in lr_suffix_types_source],
-    # )
 
     move_active_single: bpy.props.BoolProperty(update=callback_move_active_single)
     move_active_multi: bpy.props.BoolProperty(update=callback_move_active_multi)
@@ -86,8 +74,6 @@ class MIO3SK_props(bpy.types.PropertyGroup):
         name=bpy.app.translations.pgettext("Sync Collection"), type=bpy.types.Collection
     )
 
-def callback_update_mode():
-    auto_active_mirror_edit()
 
 def callback_update_shapekey():
     sync_shapekey_value()
@@ -113,12 +99,6 @@ msgbus_owner = object()
 def register_msgbus():
 
     bpy.msgbus.clear_by_owner(msgbus_owner)
-    bpy.msgbus.subscribe_rna(
-        key=(bpy.types.Object, "mode"),
-        owner=msgbus_owner,
-        args=(),
-        notify=callback_update_mode,
-    )
     bpy.msgbus.subscribe_rna(
         key=(bpy.types.Object, "active_shape_key_index"),
         owner=msgbus_owner,
@@ -155,11 +135,7 @@ def register_msgbus():
 
     if hasattr(bpy.context, "scene"):
         prop_s = bpy.context.scene.mio3sk
-        if prop_s.xmirror_auto_enabled:
-            register_auto_active_mirror_edit()
     else:
-        # Default=True
-        # register_auto_active_mirror_edit()
         pass
 
 
@@ -208,7 +184,6 @@ def register():
 
 def unregister():
     bpy.app.handlers.load_post.remove(load_handler)
-    unregister_auto_active_mirror_edit()
     bpy.msgbus.clear_by_owner(msgbus_owner)
     for c in classes:
         bpy.utils.unregister_class(c)

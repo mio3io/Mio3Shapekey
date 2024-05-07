@@ -36,36 +36,3 @@ def sync_active_shape_key():
             index = elem.data.shape_keys.key_blocks.find(object.active_shape_key.name)
             elem.active_shape_key_index = index if index >= 0 else 0
 
-
-msgbus_owner_auto_active_mirror_edit = object()
-
-
-def register_auto_active_mirror_edit():
-    bpy.msgbus.clear_by_owner(msgbus_owner_auto_active_mirror_edit)
-    bpy.msgbus.subscribe_rna(
-        key=(bpy.types.Object, "active_shape_key_index"),
-        owner=msgbus_owner_auto_active_mirror_edit,
-        args=(),
-        notify=auto_active_mirror_edit,
-    )
-
-
-def unregister_auto_active_mirror_edit():
-    bpy.msgbus.clear_by_owner(msgbus_owner_auto_active_mirror_edit)
-
-
-def auto_active_mirror_edit():
-    object = bpy.context.object
-    prop_s = bpy.context.scene.mio3sk
-    if prop_s.xmirror_auto_enabled and bpy.context.active_object.mode == "EDIT":
-
-        object.data.use_mirror_x = True
-        for lr_suffix in lr_suffix_types.values():
-            trim_l = object.active_shape_key.name[-lr_suffix[1] :]
-            trim_r = object.active_shape_key.name[-lr_suffix[3] :]
-            if trim_l == lr_suffix[0] or trim_r == lr_suffix[2]:
-                object.data.use_mirror_x = False
-                break
-
-        for win in bpy.context.window_manager.windows:
-            [area.tag_redraw() for area in win.screen.areas if area.type in {"VIEW_3D"}]

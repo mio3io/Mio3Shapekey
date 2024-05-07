@@ -32,7 +32,11 @@ class MIO3SK_OT_reset(Operator):
         if self.type == "select":
             bpy.ops.object.mode_set(mode="EDIT")
             basis = mesh.shape_keys.key_blocks[0]
-            bpy.ops.mesh.blend_from_shape(shape=basis.name, blend=1.0, add=False)
+            try:
+                bpy.ops.mesh.blend_from_shape(shape=basis.name, blend=1.0, add=False)
+            except Exception as e:
+                self.report({'ERROR'}, str(e))
+            
         else:
             bpy.ops.object.mode_set(mode="OBJECT")
             for i, el in enumerate(mesh.vertices):

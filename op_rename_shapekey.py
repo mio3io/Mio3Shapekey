@@ -1,6 +1,7 @@
 import re
 import bpy
-from bpy.types import Operator
+from bpy.types import Operator, Panel
+from bpy.app.translations import pgettext
 from .define import *
 from .op_util import *
 from .op_sync_shapekey import *
@@ -84,3 +85,53 @@ def rep_func_replace(str, search, replace):
 
 def rep_func_regex(str, search, replace):
     return re.sub(search, replace, str)
+
+
+class MIO3SK_PT_sub_rename(Panel):
+    bl_label = "Rename (sync)"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Item"
+    bl_parent_id = "MIO3SK_PT_main"
+    bl_options = {"DEFAULT_CLOSED"}
+
+    @classmethod
+    def poll(cls, context):
+        return context.object.active_shape_key is not None
+
+    def draw(self, context):
+        prop_s = context.scene.mio3sk
+        layout = self.layout
+
+        layout.prop(context.object.active_shape_key, "name", text="Current Name", emboss=False)
+        layout.prop(prop_s, "rename_inputname", text="New Name")
+        layout.prop(prop_s, "rename_sync_collections", text="Change other sync objects")
+        layout.operator(MIO3SK_OT_rename.bl_idname, text="Rename")
+
+
+class MIO3SK_PT_sub_replace(Panel):
+    bl_label = "Replace Names (sync)"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Item"
+    bl_parent_id = "MIO3SK_PT_main"
+    bl_options = {"DEFAULT_CLOSED"}
+
+    @classmethod
+    def poll(cls, context):
+        return context.object.active_shape_key is not None
+
+    def draw(self, context):
+        prop_s = context.scene.mio3sk
+        layout = self.layout
+
+        layout.separator()
+        layout.prop(prop_s, "rename_search", text="Search")
+        layout.prop(prop_s, "rename_replace", text="Replace")
+        row = layout.row()
+        row.prop(prop_s, "rename_regex", text="Use Regex")
+        row.scale_x=0.5
+        op = row.operator('wm.url_open', text=pgettext("Syntax"), icon="URL")
+        op.url = "https://docs.python.org/3/library/re.html"
+        layout.prop(prop_s, "rename_replace_sync_collections", text="Change other sync objects")
+        layout.operator(MIO3SK_OT_replace.bl_idname, text="Replace")

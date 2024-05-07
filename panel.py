@@ -7,10 +7,8 @@ from .op_util import *
 from .op_sync_shapekey import *
 from .op_add_shapekey import *
 from .op_remove_shapekey import *
-from .op_move_shapekey import *
 from .op_sort_shapekey import *
 from .op_reset_shapekey import *
-from .op_rename_shapekey import *
 from .op_propagate_shapekey import *
 
 
@@ -103,142 +101,6 @@ class MIO3SK_PT_main(Panel):
             row.scale_x = 1
             row.operator(MIO3SK_OT_reset.bl_idname, text=pgettext("All Vertices")).type = "all"
             row.operator(MIO3SK_OT_reset.bl_idname, text=pgettext("Active Vertices")).type = "select"
-
-
-class MIO3SK_PT_sub_move(Panel):
-    bl_label = "Move"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_category = "Item"
-    bl_parent_id = "MIO3SK_PT_main"
-
-    @classmethod
-    def poll(cls, context):
-        return context.object.active_shape_key is not None
-
-    def draw(self, context):
-        prop_s = context.scene.mio3sk
-        layout = self.layout
-
-        row = layout.row()
-        row.row().prop(
-            prop_s,
-            "move_active_single",
-            text="Move active ShapeKey" if not prop_s.move_active_single else "Move below the key you clicked",
-            icon_value=icons["MOVE"].icon_id,
-        )
-        row.enabled = context.object.mode == "OBJECT"
-
-        row = layout.row()
-        row.enabled = context.object.mode == "OBJECT"
-        row.row().prop(
-            prop_s,
-            "move_active_multi",
-            text="Move below active ShapeKey (Multiple)" if not prop_s.move_active_multi else "Click the keys in order to move",
-            icon_value=icons["MOVE"].icon_id,
-        )
-
-
-class MIO3SK_PT_sub_sort(Panel):
-    bl_label = "Sort"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_category = "Item"
-    bl_parent_id = "MIO3SK_PT_main"
-
-    @classmethod
-    def poll(cls, context):
-        return context.object.active_shape_key is not None
-
-    def draw(self, context):
-        prop_s = context.scene.mio3sk
-        layout = self.layout
-
-        row = layout.row()
-        row.label(text="Sort by ShapeKey Name")
-
-        row = layout.row(align=True)
-        row.operator(
-            MIO3SK_OT_sort.bl_idname,
-            text=pgettext("ASC"),
-        ).type = "asc"
-        row.operator(
-            MIO3SK_OT_sort.bl_idname,
-            text=pgettext("DESC"),
-        ).type = "desc"
-
-        layout.row().prop(prop_s, "sort_priority", text="Pinned vrc.* keys")
-        layout.row().prop(prop_s, "sort_priority_mute", text="Pinned Mute keys")
-
-
-class MIO3SK_PT_sub_rename(Panel):
-    bl_label = "Rename (sync)"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_category = "Item"
-    bl_parent_id = "MIO3SK_PT_main"
-    bl_options = {"DEFAULT_CLOSED"}
-
-    @classmethod
-    def poll(cls, context):
-        return context.object.active_shape_key is not None
-
-    def draw(self, context):
-        prop_s = context.scene.mio3sk
-        layout = self.layout
-
-        layout.prop(context.object.active_shape_key, "name", text="Current Name", emboss=False)
-        layout.prop(prop_s, "rename_inputname", text="New Name")
-        layout.prop(prop_s, "rename_sync_collections", text="Change other sync objects")
-        layout.operator(MIO3SK_OT_rename.bl_idname, text="Rename")
-
-
-class MIO3SK_PT_sub_replace(Panel):
-    bl_label = "Replace Names (sync)"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_category = "Item"
-    bl_parent_id = "MIO3SK_PT_main"
-    bl_options = {"DEFAULT_CLOSED"}
-
-    @classmethod
-    def poll(cls, context):
-        return context.object.active_shape_key is not None
-
-    def draw(self, context):
-        prop_s = context.scene.mio3sk
-        layout = self.layout
-
-        layout.separator()
-        layout.prop(prop_s, "rename_search", text="Search")
-        layout.prop(prop_s, "rename_replace", text="Replace")
-        row = layout.row()
-        row.prop(prop_s, "rename_regex", text="Use Regex")
-        row.scale_x=0.5
-        op = row.operator('wm.url_open', text=pgettext("Syntax"), icon="URL")
-        op.url = "https://docs.python.org/3/library/re.html"
-        layout.prop(prop_s, "rename_replace_sync_collections", text="Change other sync objects")
-        layout.operator(MIO3SK_OT_replace.bl_idname, text="Replace")
-
-
-class MIO3SK_PT_sub_options(Panel):
-    bl_label = "Options"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_category = "Item"
-    bl_parent_id = "MIO3SK_PT_main"
-
-    @classmethod
-    def poll(cls, context):
-        return True
-
-    def draw(self, context):
-        prop_s = context.scene.mio3sk
-        layout = self.layout
-        row = layout.row()
-        row.prop(prop_s, "sync_active_shapekey_enabled", text="Sync Active ShapeKey")
-        row = layout.row()
-        row.prop(prop_s, "xmirror_auto_enabled", text="Auto X Mirror Switching")
 
 
 class MIO3SK_UL_shape_keys(UIList):

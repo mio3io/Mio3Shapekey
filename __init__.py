@@ -13,7 +13,7 @@ from .op_sort_shapekey import *
 from .op_reset_shapekey import *
 from .op_rename_shapekey import *
 from .op_propagate_shapekey import *
-
+from .op_options import *
 
 bl_info = {
     "name": "Mio3 ShapeKey",

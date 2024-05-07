@@ -1,5 +1,6 @@
 import bpy
-from bpy.types import Operator
+from bpy.types import Operator, Panel
+from bpy.app.translations import pgettext
 from .define import *
 
 
@@ -57,3 +58,35 @@ class MIO3SK_OT_sort(Operator):
         object.active_shape_key_index = key_blocks.find(current_key_name)
 
         return {"FINISHED"}
+
+
+class MIO3SK_PT_sub_sort(Panel):
+    bl_label = "Sort"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Item"
+    bl_parent_id = "MIO3SK_PT_main"
+
+    @classmethod
+    def poll(cls, context):
+        return context.object.active_shape_key is not None
+
+    def draw(self, context):
+        prop_s = context.scene.mio3sk
+        layout = self.layout
+
+        row = layout.row()
+        row.label(text="Sort by ShapeKey Name")
+
+        row = layout.row(align=True)
+        row.operator(
+            MIO3SK_OT_sort.bl_idname,
+            text=pgettext("ASC"),
+        ).type = "asc"
+        row.operator(
+            MIO3SK_OT_sort.bl_idname,
+            text=pgettext("DESC"),
+        ).type = "desc"
+
+        layout.row().prop(prop_s, "sort_priority", text="Pinned vrc.* keys")
+        layout.row().prop(prop_s, "sort_priority_mute", text="Pinned Mute keys")

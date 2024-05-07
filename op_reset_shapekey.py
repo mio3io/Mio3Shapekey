@@ -19,29 +19,33 @@ class MIO3SK_OT_reset(Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.object is not None and context.object.type in OBJECT_TYPES
+        return (
+            context.object is not None
+            and context.object.data.shape_keys is not None
+        )
 
     def execute(self, context):
         mesh = context.object.data
         shapekey = context.object.active_shape_key
-
         current_mode = context.active_object.mode
 
-        bpy.ops.object.mode_set(mode="OBJECT")
         if self.type == "select":
-            for i, el in enumerate(mesh.vertices):
-                if el.select:
-                    shapekey.data[i].co = el.co
+            bpy.ops.object.mode_set(mode="EDIT")
+            basis = mesh.shape_keys.key_blocks[0]
+            bpy.ops.mesh.blend_from_shape(shape=basis.name, blend=1.0, add=False)
         else:
+            bpy.ops.object.mode_set(mode="OBJECT")
             for i, el in enumerate(mesh.vertices):
                 shapekey.data[i].co = el.co
 
-        mesh.update()
-
-        bpy.ops.object.mode_set(mode=current_mode)
+        if context.active_object.mode != current_mode:
+            bpy.ops.object.mode_set(mode=current_mode)
 
         return {"FINISHED"}
 
     def invoke(self, context, event):
-        wm = context.window_manager
-        return wm.invoke_confirm(self, event)
+        if self.type == "all":
+            wm = context.window_manager
+            return wm.invoke_confirm(self, event)
+        else:
+            return self.execute(context)

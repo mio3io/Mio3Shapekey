@@ -28,7 +28,7 @@ class MIO3SK_OT_move_ex(Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.object is not None and context.object.data.shape_keys is not None
+        return context.object is not None and context.object.mode == "OBJECT" and context.object.data.shape_keys is not None
 
     def execute(self, context):
         object = context.object

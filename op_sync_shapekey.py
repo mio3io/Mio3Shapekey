@@ -41,16 +41,10 @@ def sync_active_shape_key():
         prop_s.rename_inputname = str(bpy.context.object.active_shape_key.name)
 
 
-@persistent
-def load_handler(scene):
-    register()
-
-
 msgbus_owner = object()
 
 
-def register():
-
+def register_msgbus():
     bpy.msgbus.clear_by_owner(msgbus_owner)
     bpy.msgbus.subscribe_rna(
         key=(bpy.types.Object, "active_shape_key_index"),
@@ -79,6 +73,15 @@ def register():
 
     if load_handler not in bpy.app.handlers.load_post:
         bpy.app.handlers.load_post.append(load_handler)
+
+
+@persistent
+def load_handler(scene):
+    register_msgbus()
+
+
+def register():
+    register_msgbus()
 
 
 def unregister():

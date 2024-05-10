@@ -1,8 +1,8 @@
 import bpy
-from bpy.types import Operator, Panel
+from bpy.types import Operator, Panel, PropertyGroup
 from bpy.app.translations import pgettext
 from .define import *
-from .icons import *
+from .icons import icons
 
 
 def callback_move_active_shapekey():
@@ -28,7 +28,11 @@ class MIO3SK_OT_move_ex(Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.object is not None and context.object.mode == "OBJECT" and context.object.data.shape_keys is not None
+        return (
+            context.object is not None
+            and context.object.mode == "OBJECT"
+            and context.object.data.shape_keys is not None
+        )
 
     def execute(self, context):
         object = context.object
@@ -152,7 +156,9 @@ class MIO3SK_PT_sub_move(Panel):
         row.operator(MIO3SK_OT_move_ex.bl_idname, icon_value=icons["UP_EX"].icon_id, text="10").type = "UP"
         row.operator("object.shape_key_move", icon="TRIA_UP", text="").type = "UP"
         row.operator("object.shape_key_move", icon="TRIA_DOWN", text="").type = "DOWN"
-        row.operator(MIO3SK_OT_move_ex.bl_idname, icon_value=icons["DOWN_EX"].icon_id, text="10").type = "DOWN"
+        row.operator(MIO3SK_OT_move_ex.bl_idname, icon_value=icons["DOWN_EX"].icon_id, text="10").type = (
+            "DOWN"
+        )
 
         row = layout.row()
         row.row().prop(
@@ -177,3 +183,22 @@ class MIO3SK_PT_sub_move(Panel):
             ),
             icon_value=icons["MOVE"].icon_id,
         )
+
+
+classes = [
+    MIO3SK_PT_sub_move,
+    MIO3SK_OT_move_set_primary,
+    MIO3SK_OT_move_remove_primary,
+    MIO3SK_OT_move,
+    MIO3SK_OT_move_ex,
+]
+
+
+def register():
+    for c in classes:
+        bpy.utils.register_class(c)
+
+
+def unregister():
+    for c in classes:
+        bpy.utils.unregister_class(c)

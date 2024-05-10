@@ -29,3 +29,18 @@ class MIO3SK_OT_remove_shapekey(Operator):
             bpy.ops.object.shape_key_remove(all=False)
 
         return {"FINISHED"}
+
+
+classes = [
+    MIO3SK_OT_remove_shapekey,
+]
+
+
+def register():
+    for c in classes:
+        bpy.utils.register_class(c)
+
+
+def unregister():
+    for c in classes:
+        bpy.utils.unregister_class(c)

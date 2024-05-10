@@ -6,7 +6,7 @@ ICON_DIR = os.path.join(os.path.dirname(__file__), "icons")
 icons = bpy.utils.previews.new()
 
 
-def register_icons():
+def register():
     if "DEFAULT" not in icons:
         icons.load("DEFAULT", os.path.join(ICON_DIR, "default.png"), "IMAGE")
         icons.load("PRIMARY", os.path.join(ICON_DIR, "primary.png"), "IMAGE")
@@ -24,7 +24,7 @@ def register_icons():
         icons.load("UP_EX", os.path.join(ICON_DIR, "arrow_up_ex.png"), "IMAGE")
         icons.load("DOWN_EX", os.path.join(ICON_DIR, "arrow_down_ex.png"), "IMAGE")
 
-def remove_icons():
+def unregister():
     for pcoll in icons.values():
         if pcoll in icons:
             bpy.utils.previews.remove(pcoll)

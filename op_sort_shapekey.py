@@ -90,3 +90,19 @@ class MIO3SK_PT_sub_sort(Panel):
 
         layout.row().prop(prop_s, "sort_priority", text="Pinned vrc.* keys")
         layout.row().prop(prop_s, "sort_priority_mute", text="Pinned Mute keys")
+
+
+classes = [
+    MIO3SK_PT_sub_sort,
+    MIO3SK_OT_sort,
+]
+
+
+def register():
+    for c in classes:
+        bpy.utils.register_class(c)
+
+
+def unregister():
+    for c in classes:
+        bpy.utils.unregister_class(c)

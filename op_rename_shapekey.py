@@ -4,7 +4,6 @@ from bpy.types import Operator, Panel
 from bpy.app.translations import pgettext
 from .define import *
 from .op_util import *
-from .op_sync_shapekey import *
 
 
 class MIO3SK_OT_rename(Operator):
@@ -130,8 +129,26 @@ class MIO3SK_PT_sub_replace(Panel):
         layout.prop(prop_s, "rename_replace", text="Replace")
         row = layout.row()
         row.prop(prop_s, "rename_regex", text="Use Regex")
-        row.scale_x=0.5
-        op = row.operator('wm.url_open', text=pgettext("Syntax"), icon="URL")
+        row.scale_x = 0.5
+        op = row.operator("wm.url_open", text=pgettext("Syntax"), icon="URL")
         op.url = "https://docs.python.org/3/library/re.html"
         layout.prop(prop_s, "rename_replace_sync_collections", text="Change other sync objects")
         layout.operator(MIO3SK_OT_replace.bl_idname, text="Replace")
+
+
+classes = [
+    MIO3SK_PT_sub_rename,
+    MIO3SK_PT_sub_replace,
+    MIO3SK_OT_rename,
+    MIO3SK_OT_replace,
+]
+
+
+def register():
+    for c in classes:
+        bpy.utils.register_class(c)
+
+
+def unregister():
+    for c in classes:
+        bpy.utils.unregister_class(c)

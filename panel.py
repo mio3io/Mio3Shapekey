@@ -2,15 +2,13 @@ import bpy
 from bpy.types import Panel, UIList
 from bpy.app.translations import pgettext
 from .define import *
-from .icons import *
 from .op_util import *
-from .op_sync_shapekey import *
-from .op_add_shapekey import *
-from .op_remove_shapekey import *
-from .op_sort_shapekey import *
-from .op_reset_shapekey import *
-from .op_propagate_shapekey import *
-
+from .icons import icons
+from .op_add_shapekey import MIO3SK_OT_add_key_current, MIO3SK_OT_add_preset, MIO3SK_OT_some_file, MIO3SK_OT_fill_keys
+from .op_remove_shapekey import MIO3SK_OT_remove_shapekey
+from .op_sort_shapekey import MIO3SK_OT_sort
+from .op_reset_shapekey import MIO3SK_OT_reset
+from .op_propagate_shapekey import MIO3SK_OT_propagate_to_basis
 
 class MIO3SK_PT_main(Panel):
     bl_space_type = "VIEW_3D"
@@ -192,3 +190,20 @@ class MIO3SK_MT_context(bpy.types.Menu):
             MIO3SK_OT_fill_keys.bl_idname,
             text=pgettext("Fill Shapekeys"),
         )
+
+
+classes = [
+    MIO3SK_PT_main,
+    MIO3SK_MT_context,
+    MIO3SK_UL_shape_keys,
+]
+
+
+def register():
+    for c in classes:
+        bpy.utils.register_class(c)
+
+
+def unregister():
+    for c in classes:
+        bpy.utils.unregister_class(c)

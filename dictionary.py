@@ -91,11 +91,11 @@ translation_dict = {
 }
 
 
-def register_translations(name):
+def register(name):
     if bpy.app.translations.pgettext("Sync Collection"):
         bpy.app.translations.unregister(name)
     bpy.app.translations.register(name, translation_dict)
 
 
-def remove_translations(name):
+def unregister(name):
     bpy.app.translations.unregister(name)

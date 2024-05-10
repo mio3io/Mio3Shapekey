@@ -17,3 +17,18 @@ class MIO3SK_PT_sub_options(Panel):
         layout = self.layout
         row = layout.row()
         row.prop(prop_s, "sync_active_shapekey_enabled", text="Sync Active ShapeKey")
+
+
+classes = [
+    MIO3SK_PT_sub_options
+]
+
+
+def register():
+    for c in classes:
+        bpy.utils.register_class(c)
+
+
+def unregister():
+    for c in classes:
+        bpy.utils.unregister_class(c)

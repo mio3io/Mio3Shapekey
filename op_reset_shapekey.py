@@ -53,3 +53,18 @@ class MIO3SK_OT_reset(Operator):
             return wm.invoke_confirm(self, event)
         else:
             return self.execute(context)
+
+
+classes = [
+    MIO3SK_OT_reset,
+]
+
+
+def register():
+    for c in classes:
+        bpy.utils.register_class(c)
+
+
+def unregister():
+    for c in classes:
+        bpy.utils.unregister_class(c)

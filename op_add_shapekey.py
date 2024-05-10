@@ -15,11 +15,16 @@ class MIO3SK_OT_add_key_current(Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.object is not None and context.object.type in OBJECT_TYPES and context.object.data.shape_keys is not None and context.active_object.mode == "OBJECT"
+        return (
+            context.object is not None
+            and context.object.type in OBJECT_TYPES
+            and context.object.data.shape_keys is not None
+            and context.active_object.mode == "OBJECT"
+        )
 
     def execute(self, context):
         object = context.object
-        
+
         base_idx = object.active_shape_key_index
         move_idx = len(object.data.shape_keys.key_blocks)
         object.active_shape_key_index = move_idx
@@ -127,3 +132,21 @@ def addNewKey(keyname, context):
 def initShapeKey(context):
     if context.object.data.shape_keys is None:
         bpy.ops.object.shape_key_add(from_mix=False)
+
+
+classes = [
+    MIO3SK_OT_some_file,
+    MIO3SK_OT_add_key_current,
+    MIO3SK_OT_add_preset,
+    MIO3SK_OT_fill_keys,
+]
+
+
+def register():
+    for c in classes:
+        bpy.utils.register_class(c)
+
+
+def unregister():
+    for c in classes:
+        bpy.utils.unregister_class(c)

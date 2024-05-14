@@ -19,7 +19,7 @@ class MIO3SK_OT_add_key_current(Operator):
             context.object is not None
             and context.object.type in OBJECT_TYPES
             and context.object.data.shape_keys is not None
-            and context.active_object.mode == "OBJECT"
+            and context.object.mode == "OBJECT"
         )
 
     def execute(self, context):

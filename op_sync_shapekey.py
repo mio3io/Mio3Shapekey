@@ -5,7 +5,7 @@ from .op_util import *
 
 
 def sync_shapekey_value():
-    if bpy.context.active_object is None:
+    if bpy.context.object is None:
         return
     object = bpy.context.object
     prop_o = object.mio3sksync

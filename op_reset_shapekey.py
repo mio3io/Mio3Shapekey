@@ -27,7 +27,7 @@ class MIO3SK_OT_reset(Operator):
     def execute(self, context):
         mesh = context.object.data
         shapekey = context.object.active_shape_key
-        current_mode = context.active_object.mode
+        current_mode = context.object.mode
 
         if self.type == "select":
             bpy.ops.object.mode_set(mode="EDIT")
@@ -42,7 +42,7 @@ class MIO3SK_OT_reset(Operator):
             for i, el in enumerate(mesh.vertices):
                 shapekey.data[i].co = el.co
 
-        if context.active_object.mode != current_mode:
+        if context.object.mode != current_mode:
             bpy.ops.object.mode_set(mode=current_mode)
 
         return {"FINISHED"}

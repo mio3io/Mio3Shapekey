@@ -15,7 +15,7 @@ class MIO3SK_OT_propagate_to_basis(Operator):
 
     def execute(self, context):
         mesh = context.object.data
-        current_mode = context.active_object.mode
+        current_mode = context.object.mode
         current_index = bpy.context.object.active_shape_key_index
         shapekey_from = context.object.active_shape_key.name
 

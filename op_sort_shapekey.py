@@ -66,6 +66,7 @@ class MIO3SK_PT_sub_sort(Panel):
     bl_region_type = "UI"
     bl_category = "Item"
     bl_parent_id = "MIO3SK_PT_main"
+    bl_options = {"DEFAULT_CLOSED"}
 
     @classmethod
     def poll(cls, context):

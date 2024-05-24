@@ -27,9 +27,40 @@ bl_info = {
 }
 
 
+def update_panel(self, context):
+    is_exist = hasattr(bpy.types, "MIO3SK_PT_main")
+    category = bpy.context.preferences.addons[__package__].preferences.category
+
+    if is_exist:
+        try:
+            bpy.utils.unregister_class(panel.MIO3SK_PT_main)
+        except:
+            pass
+
+    panel.MIO3SK_PT_main.bl_category = category
+    bpy.utils.register_class(panel.MIO3SK_PT_main)
+
+
+class MIO3SK_Preferences(bpy.types.AddonPreferences):
+    bl_idname = __name__
+
+    category: bpy.props.StringProperty(
+        name="Tab",
+        description="Tab",
+        default="Tool",
+        update=update_panel,
+    )
+
+    def draw(self, context):
+        layout = self.layout
+        layout.prop(self, "category")
+
+
 def register():
     dictionary.register(__name__)
     icons.register()
+
+    bpy.utils.register_class(MIO3SK_Preferences)
 
     properties.register()
     panel.register()
@@ -45,9 +76,6 @@ def register():
 
 
 def unregister():
-    dictionary.unregister(__name__)
-    icons.unregister()
-
     properties.unregister()
     panel.unregister()
     op_sync_shapekey.unregister()
@@ -59,6 +87,11 @@ def unregister():
     op_reset_shapekey.unregister()
     op_propagate_shapekey.unregister()
     op_options.unregister()
+
+    bpy.utils.unregister_class(MIO3SK_Preferences)
+
+    icons.unregister()
+    dictionary.unregister(__name__)
 
 
 if __name__ == "__main__":

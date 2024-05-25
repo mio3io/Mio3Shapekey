@@ -2,7 +2,7 @@ import bpy
 from bpy.types import Operator, Panel, PropertyGroup
 from bpy.app.translations import pgettext
 from .define import *
-from .icons import icons
+from .icons import preview_collections
 
 
 def callback_move_active_shapekey():
@@ -149,6 +149,7 @@ class MIO3SK_PT_sub_move(Panel):
 
     def draw(self, context):
         prop_s = context.scene.mio3sk
+        icons = preview_collections["icons"]
         layout = self.layout
 
         row = layout.row(align=True)

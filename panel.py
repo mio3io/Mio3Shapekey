@@ -3,7 +3,7 @@ from bpy.types import Panel, UIList
 from bpy.app.translations import pgettext
 from .define import *
 from .op_util import *
-from .icons import icons
+from .icons import preview_collections
 from .op_add_shapekey import MIO3SK_OT_add_key_current, MIO3SK_OT_add_preset, MIO3SK_OT_some_file, MIO3SK_OT_fill_keys
 from .op_remove_shapekey import MIO3SK_OT_remove_shapekey
 from .op_sort_shapekey import MIO3SK_OT_sort
@@ -103,6 +103,7 @@ class MIO3SK_PT_main(Panel):
 
 class MIO3SK_UL_shape_keys(UIList):
     def draw_item(self, context, layout, _data, item, icon, active_data, _active_propname, index):
+        icons = preview_collections["icons"]
         obj = active_data
         key_block = item
         prop_s = context.scene.mio3sk

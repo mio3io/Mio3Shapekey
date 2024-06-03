@@ -3,10 +3,10 @@ from bpy.types import Operator
 from .define import *
 
 
-class MIO3SK_OT_propagate_to_basis(Operator):
-    bl_idname = "mio3sk.propagate_to_basis"
-    bl_label = "Propagate to Basis(Selected Vertices)"
-    bl_description = "Propagate to Basis(Selected Vertices)"
+class MIO3SK_OT_apply_to_basis(Operator):
+    bl_idname = "mio3sk.apply_to_basis"
+    bl_label = "apply to Basis(Selected Vertices)"
+    bl_description = "apply to Basis(Selected Vertices)"
     bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
@@ -31,7 +31,7 @@ class MIO3SK_OT_propagate_to_basis(Operator):
         return {"FINISHED"}
 
 classes = [
-    MIO3SK_OT_propagate_to_basis
+    MIO3SK_OT_apply_to_basis
 ]
 
 

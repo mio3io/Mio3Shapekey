@@ -8,7 +8,7 @@ from .op_add_shapekey import MIO3SK_OT_add_key_current, MIO3SK_OT_add_preset, MI
 from .op_remove_shapekey import MIO3SK_OT_remove_shapekey
 from .op_sort_shapekey import MIO3SK_OT_sort
 from .op_reset_shapekey import MIO3SK_OT_reset
-from .op_propagate_shapekey import MIO3SK_OT_propagate_to_basis
+from .op_apply_shapekey import MIO3SK_OT_apply_to_basis
 
 class MIO3SK_PT_main(Panel):
     bl_space_type = "VIEW_3D"
@@ -144,8 +144,8 @@ class MIO3SK_MT_context(bpy.types.Menu):
 
         layout.separator()
         layout.operator(
-            MIO3SK_OT_propagate_to_basis.bl_idname,
-            text=pgettext("Propagate to Basis(Selected Vertices)"),
+            MIO3SK_OT_apply_to_basis.bl_idname,
+            text=pgettext("Apply to Basis(Selected Vertices)"),
         )
         layout.separator()
 

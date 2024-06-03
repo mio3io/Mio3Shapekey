@@ -12,7 +12,7 @@ from . import op_move_shapekey
 from . import op_sort_shapekey
 from . import op_reset_shapekey
 from . import op_rename_shapekey
-from . import op_propagate_shapekey
+from . import op_apply_shapekey
 from . import op_options
 
 bl_info = {
@@ -71,7 +71,7 @@ def register():
     op_sort_shapekey.register()
     op_rename_shapekey.register()
     op_reset_shapekey.register()
-    op_propagate_shapekey.register()
+    op_apply_shapekey.register()
     op_options.register()
 
 
@@ -85,7 +85,7 @@ def unregister():
     op_sort_shapekey.unregister()
     op_rename_shapekey.unregister()
     op_reset_shapekey.unregister()
-    op_propagate_shapekey.unregister()
+    op_apply_shapekey.unregister()
     op_options.unregister()
 
     bpy.utils.unregister_class(MIO3SK_Preferences)

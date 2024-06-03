@@ -70,7 +70,8 @@ class MIO3SK_OT_blend(Operator):
         bm.verts.ensure_lookup_table()
 
         selected_verts = [v for v in bm.verts if v.select]
-        if context.object.use_mesh_mirror_x:
+        # Xミラーがオンのとき対称の頂点も追加
+        if context.object.use_mesh_mirror_x and not self.blend_mode in ["LEFT", "RIGHT"]:
             selected_verts.extend(self.get_symmetry(bm, selected_verts))
 
         selected_verts_indices = [v.index for v in selected_verts]

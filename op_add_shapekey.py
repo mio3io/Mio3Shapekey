@@ -8,7 +8,7 @@ from .op_util import *
 
 # 選択しているキーの下に新しいキーを追加
 class MIO3SK_OT_add_key_current(Operator):
-    bl_idname = "mio3sk.add_key_current"
+    bl_idname = "object.mio3_add_key_current"
     bl_label = "Add Shape Key"
     bl_description = "Add: Shape Key at current position"
     bl_options = {"REGISTER", "UNDO"}

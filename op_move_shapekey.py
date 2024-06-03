@@ -13,7 +13,7 @@ move_msgbus_owner = object()
 
 
 class MIO3SK_OT_move_ex(Operator):
-    bl_idname = "mio3sk.move_ex"
+    bl_idname = "object.mio3sk_move_ex"
     bl_label = "シェイプキーを移動"
     bl_description = "10個づつ移動する"
     bl_options = {"REGISTER", "UNDO"}

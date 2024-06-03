@@ -54,7 +54,7 @@ class MIO3SK_PT_main(Panel):
         col = row.column(align=True)
 
         col.operator("object.shape_key_add", icon='ADD', text="").from_mix = False
-        col.operator("MIO3SK_OT_add_key_current", icon='PLUS', text="")
+        col.operator(MIO3SK_OT_add_key_current.bl_idname, icon='PLUS', text="")
         col.operator("object.shape_key_remove", icon='REMOVE', text="").all = False
 
         col.separator()

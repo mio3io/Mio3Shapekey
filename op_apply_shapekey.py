@@ -4,7 +4,7 @@ from .define import *
 
 
 class MIO3SK_OT_apply_to_basis(Operator):
-    bl_idname = "mio3sk.apply_to_basis"
+    bl_idname = "mesh.mio3sk_apply_to_basis"
     bl_label = "apply to Basis(Selected Vertices)"
     bl_description = "apply to Basis(Selected Vertices)"
     bl_options = {"REGISTER", "UNDO"}
@@ -19,7 +19,6 @@ class MIO3SK_OT_apply_to_basis(Operator):
         current_index = bpy.context.object.active_shape_key_index
         shapekey_from = context.object.active_shape_key.name
 
-
         bpy.ops.object.mode_set(mode="EDIT")
 
         bpy.context.object.active_shape_key_index = 0
@@ -30,9 +29,8 @@ class MIO3SK_OT_apply_to_basis(Operator):
 
         return {"FINISHED"}
 
-classes = [
-    MIO3SK_OT_apply_to_basis
-]
+
+classes = [MIO3SK_OT_apply_to_basis]
 
 
 def register():

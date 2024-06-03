@@ -38,7 +38,8 @@ def sync_active_shape_key():
             for elem in [o for o in prop_o.syncs.objects if has_shapekey(o) and o != object]:
                 index = elem.data.shape_keys.key_blocks.find(object.active_shape_key.name)
                 elem.active_shape_key_index = index if index >= 0 else 0
-        prop_s.rename_inputname = str(bpy.context.object.active_shape_key.name)
+        if bpy.context.object.active_shape_key:
+            prop_s.rename_inputname = str(bpy.context.object.active_shape_key.name)
 
 
 msgbus_owner = object()

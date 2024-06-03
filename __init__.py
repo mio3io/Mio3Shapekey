@@ -5,15 +5,16 @@ from . import properties
 from . import dictionary
 from . import icons
 from . import panel
+from . import op_blend_shapekey
 from . import op_sync_shapekey
 from . import op_add_shapekey
 from . import op_remove_shapekey
 from . import op_move_shapekey
 from . import op_sort_shapekey
-from . import op_reset_shapekey
 from . import op_rename_shapekey
 from . import op_apply_shapekey
 from . import op_options
+
 
 bl_info = {
     "name": "Mio3 ShapeKey",
@@ -64,13 +65,13 @@ def register():
 
     properties.register()
     panel.register()
+    op_blend_shapekey.register()
     op_sync_shapekey.register()
     op_add_shapekey.register()
     op_remove_shapekey.register()
     op_move_shapekey.register()
     op_sort_shapekey.register()
     op_rename_shapekey.register()
-    op_reset_shapekey.register()
     op_apply_shapekey.register()
     op_options.register()
 
@@ -78,13 +79,13 @@ def register():
 def unregister():
     properties.unregister()
     panel.unregister()
+    op_blend_shapekey.unregister()
     op_sync_shapekey.unregister()
     op_add_shapekey.unregister()
     op_remove_shapekey.unregister()
     op_move_shapekey.unregister()
     op_sort_shapekey.unregister()
     op_rename_shapekey.unregister()
-    op_reset_shapekey.unregister()
     op_apply_shapekey.unregister()
     op_options.unregister()
 

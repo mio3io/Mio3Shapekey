@@ -7,7 +7,7 @@ from .icons import preview_collections
 from .op_add_shapekey import MIO3SK_OT_add_key_current, MIO3SK_OT_add_preset, MIO3SK_OT_some_file, MIO3SK_OT_fill_keys
 from .op_remove_shapekey import MIO3SK_OT_remove_shapekey
 from .op_sort_shapekey import MIO3SK_OT_sort
-from .op_reset_shapekey import MIO3SK_OT_reset
+from .op_blend_shapekey import MIO3SK_OT_reset
 from .op_apply_shapekey import MIO3SK_OT_apply_to_basis
 
 class MIO3SK_PT_main(Panel):
@@ -77,8 +77,12 @@ class MIO3SK_PT_main(Panel):
                     for ckey in cobj.data.shape_keys.key_blocks:
                         collection_keys.append(ckey.name)
             # シェイプキー数
-            row.label(text="Local:" + str(len(shape_keys.key_blocks)))
-            row.label(text="Collection:" + str(len(list(set(collection_keys)))))
+            row.label(text="" + str(len(shape_keys.key_blocks)) + " / " + str(len(list(set(collection_keys)))))
+
+            row.scale_x = 1.8
+            row.operator(MIO3SK_OT_reset.bl_idname, text="形状リセット")
+
+            row.scale_x = 1
 
             row.alignment = 'RIGHT'
             sub = row.row(align=True)
@@ -90,15 +94,6 @@ class MIO3SK_PT_main(Panel):
                 sub.operator("object.shape_key_clear", icon='X', text="")
             else:
                 sub.operator("object.shape_key_retime", icon='RECOVER_LAST', text="")
-
-            layout.separator()
-
-            row = layout.row(align=True)
-            row.scale_x = 1.2
-            row.label(text="Reset Shape")
-            row.scale_x = 1
-            row.operator(MIO3SK_OT_reset.bl_idname, text=pgettext("All Vertices")).type = "all"
-            row.operator(MIO3SK_OT_reset.bl_idname, text=pgettext("Active Vertices")).type = "select"
 
 
 class MIO3SK_UL_shape_keys(UIList):

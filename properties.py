@@ -1,5 +1,6 @@
 import bpy
 from bpy.types import PropertyGroup
+from bpy.app.handlers import persistent
 
 
 def callback_move_active_single(self, context):
@@ -21,8 +22,10 @@ def callback_move_active_multi(self, context):
 
 
 class MIO3SK_scene_props(PropertyGroup):
-
     sync_active_shapekey_enabled: bpy.props.BoolProperty(default=True)
+
+    blend: bpy.props.FloatProperty(name="ブレンド", default=1, soft_min=-1, soft_max=2, step=10)
+    blend_smooth: bpy.props.BoolProperty(name="スムーズブレンド", default=False)
 
     move_active_single: bpy.props.BoolProperty(update=callback_move_active_single)
     move_active_multi: bpy.props.BoolProperty(update=callback_move_active_multi)
@@ -48,6 +51,47 @@ class MIO3SK_props(bpy.types.PropertyGroup):
     syncs: bpy.props.PointerProperty(
         name=bpy.app.translations.pgettext("Sync Collection"), type=bpy.types.Collection
     )
+    blend_source_name: bpy.props.StringProperty()
+
+
+def callback_rename():
+    obj = bpy.context.object
+    if obj and obj.type in {"MESH", "CURVE", "SURFACE", "LATTICE"} and obj.data.shape_keys:
+        current_shape_key_names = [sk.name for sk in obj.data.shape_keys.key_blocks]
+        if "stored_shape_key_names" not in obj:
+            obj["stored_shape_key_names"] = current_shape_key_names
+        else:
+            stored_shape_key_names = obj["stored_shape_key_names"]
+            # added_keys = set(current_shape_key_names) - set(stored_shape_key_names)
+            removed_keys = set(stored_shape_key_names) - set(current_shape_key_names)
+            if removed_keys:
+                for old_name, new_name in zip(stored_shape_key_names, current_shape_key_names):
+                    prop_o = obj.mio3sksync
+                    if old_name != new_name:
+                        if hasattr(prop_o, "blend_source") and prop_o.blend_source == old_name:
+                            prop_o.blend_source = new_name
+                        break
+            obj["stored_shape_key_names"] = current_shape_key_names
+
+
+msgbus_owner = object()
+
+
+def register_msgbus():
+    bpy.msgbus.clear_by_owner(msgbus_owner)
+    bpy.msgbus.subscribe_rna(
+        key=(bpy.types.ShapeKey, "name"),
+        owner=msgbus_owner,
+        args=(),
+        notify=callback_rename,
+    )
+    if load_handler not in bpy.app.handlers.load_post:
+        bpy.app.handlers.load_post.append(load_handler)
+
+
+@persistent
+def load_handler(scene):
+    register_msgbus()
 
 
 classes = [
@@ -63,6 +107,8 @@ def register():
     bpy.types.Scene.mio3sk = bpy.props.PointerProperty(type=MIO3SK_scene_props)
     bpy.types.Object.mio3sksync = bpy.props.PointerProperty(type=MIO3SK_props)
 
+    register_msgbus()
+
 
 def unregister():
     for c in classes:
@@ -70,3 +116,6 @@ def unregister():
 
     del bpy.types.Scene.mio3sk
     del bpy.types.Object.mio3sksync
+
+    bpy.msgbus.clear_by_owner(msgbus_owner)
+    bpy.app.handlers.load_post.remove(load_handler)

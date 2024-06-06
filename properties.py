@@ -68,8 +68,8 @@ def callback_rename():
                 for old_name, new_name in zip(stored_shape_key_names, current_shape_key_names):
                     prop_o = obj.mio3sksync
                     if old_name != new_name:
-                        if hasattr(prop_o, "blend_source") and prop_o.blend_source == old_name:
-                            prop_o.blend_source = new_name
+                        if hasattr(prop_o, "blend_source_name") and prop_o.blend_source_name == old_name:
+                            prop_o.blend_source_name = new_name
                         break
             obj["stored_shape_key_names"] = current_shape_key_names
 

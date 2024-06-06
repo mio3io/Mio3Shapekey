@@ -5,41 +5,81 @@ from .op_util import *
 
 
 def sync_shapekey_value():
-    if bpy.context.object is None:
+    context = bpy.context
+    obj = context.active_object
+
+    if not (obj and obj.data.shape_keys and is_sync_collection(obj)):
         return
-    object = bpy.context.object
-    prop_o = object.mio3sksync
-    if is_sync_collection(object):
-        key_blocks = object.data.shape_keys.key_blocks
-        for item in [v for v in prop_o.syncs.objects if has_shapekey(v) and v != object]:
-            for item_key in item.data.shape_keys.key_blocks:
-                if item_key.name in key_blocks:
-                    if item_key.mute != key_blocks[item_key.name].mute:
-                        item_key.mute = key_blocks[item_key.name].mute
-                    if item_key.value != key_blocks[item_key.name].value:
-                        item_key.value = key_blocks[item_key.name].value
+
+    prop_o = obj.mio3sksync
+    source_key_blocks = obj.data.shape_keys.key_blocks
+
+    for m_obj in prop_o.syncs.objects:
+        if m_obj == obj or not has_shapekey(m_obj):
+            continue
+
+        target_key_blocks = m_obj.data.shape_keys.key_blocks
+        for target_key in target_key_blocks:
+            if target_key.name in source_key_blocks:
+                if target_key.value != source_key_blocks[target_key.name].value:
+                    target_key.value = source_key_blocks[target_key.name].value
+
+
+def sync_shapekey_mute():
+    context = bpy.context
+    obj = context.active_object
+
+    if not (obj and obj.data.shape_keys and is_sync_collection(obj)):
+        return
+
+    prop_o = obj.mio3sksync
+    source_key_blocks = obj.data.shape_keys.key_blocks
+
+    for m_obj in prop_o.syncs.objects:
+        if m_obj == obj or not has_shapekey(m_obj):
+            continue
+
+        target_key_blocks = m_obj.data.shape_keys.key_blocks
+        for target_key in target_key_blocks:
+            if target_key.name in source_key_blocks:
+                if target_key.mute != source_key_blocks[target_key.name].mute:
+                    target_key.mute = source_key_blocks[target_key.name].mute
 
 
 def sync_show_only_shape_key():
-    object = bpy.context.object
-    prop_o = object.mio3sksync
-    if is_sync_collection(object):
-        for item in [v for v in prop_o.syncs.objects if has_shapekey(v) and v != object]:
-            if item.show_only_shape_key != object.show_only_shape_key:
-                item.show_only_shape_key = object.show_only_shape_key
+    context = bpy.context
+    obj = context.active_object
+
+    if not (obj and obj.data.shape_keys and is_sync_collection(obj)):
+        return
+
+    prop_o = obj.mio3sksync
+
+    for m_obj in prop_o.syncs.objects:
+        if m_obj == obj or not has_shapekey(m_obj):
+            continue
+        if m_obj.show_only_shape_key != obj.show_only_shape_key:
+            m_obj.show_only_shape_key = obj.show_only_shape_key
 
 
 def sync_active_shape_key():
-    object = bpy.context.object
-    prop_s = bpy.context.scene.mio3sk
-    prop_o = object.mio3sksync
-    if prop_s.sync_active_shapekey_enabled:
-        if is_sync_collection(object):
-            for elem in [o for o in prop_o.syncs.objects if has_shapekey(o) and o != object]:
-                index = elem.data.shape_keys.key_blocks.find(object.active_shape_key.name)
-                elem.active_shape_key_index = index if index >= 0 else 0
-        if bpy.context.object.active_shape_key:
-            prop_s.rename_inputname = str(bpy.context.object.active_shape_key.name)
+    context = bpy.context
+    obj = context.active_object
+
+    if not (obj and obj.data.shape_keys and is_sync_collection(obj)):
+        return
+
+    prop_s = context.scene.mio3sk
+    if not prop_s.sync_active_shapekey_enabled:
+        return
+
+    prop_o = obj.mio3sksync
+
+    for m_obj in prop_o.syncs.objects:
+        if m_obj == obj or not has_shapekey(m_obj):
+            continue
+        index = m_obj.data.shape_keys.key_blocks.find(obj.active_shape_key.name)
+        m_obj.active_shape_key_index = index if index >= 0 else 0
 
 
 msgbus_owner = object()
@@ -63,7 +103,7 @@ def register_msgbus():
         key=(bpy.types.ShapeKey, "mute"),
         owner=msgbus_owner,
         args=(),
-        notify=sync_shapekey_value,
+        notify=sync_shapekey_mute,
     )
     bpy.msgbus.subscribe_rna(
         key=(bpy.types.Object, "show_only_shape_key"),

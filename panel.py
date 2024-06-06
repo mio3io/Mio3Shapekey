@@ -4,11 +4,17 @@ from bpy.app.translations import pgettext
 from .define import *
 from .op_util import *
 from .icons import preview_collections
-from .op_add_shapekey import MIO3SK_OT_add_key_current, MIO3SK_OT_add_preset, MIO3SK_OT_some_file, MIO3SK_OT_fill_keys
+from .op_add_shapekey import (
+    MIO3SK_OT_add_key_current,
+    MIO3SK_OT_add_preset,
+    MIO3SK_OT_some_file,
+    MIO3SK_OT_fill_keys,
+)
 from .op_remove_shapekey import MIO3SK_OT_remove_shapekey
 from .op_sort_shapekey import MIO3SK_OT_sort
 from .op_blend_shapekey import MIO3SK_OT_reset
 from .op_apply_shapekey import MIO3SK_OT_apply_to_basis
+
 
 class MIO3SK_PT_main(Panel):
     bl_space_type = "VIEW_3D"
@@ -35,7 +41,6 @@ class MIO3SK_PT_main(Panel):
         # コンテキストメニュー
         row.menu("MIO3SK_MT_context", icon="DOWNARROW_HLT", text="")
 
-
         row = layout.row()
 
         # シェイプキーリスト
@@ -50,20 +55,20 @@ class MIO3SK_PT_main(Panel):
         )
         col = row.column(align=True)
 
-        col.operator("object.shape_key_add", icon='ADD', text="").from_mix = False
-        col.operator(MIO3SK_OT_add_key_current.bl_idname, icon='PLUS', text="")
-        col.operator("object.shape_key_remove", icon='REMOVE', text="").all = False
+        col.operator("object.shape_key_add", icon="ADD", text="").from_mix = False
+        col.operator(MIO3SK_OT_add_key_current.bl_idname, icon="PLUS", text="")
+        col.operator("object.shape_key_remove", icon="REMOVE", text="").all = False
 
         col.separator()
 
-        col.menu("MESH_MT_shape_key_context_menu", icon='DOWNARROW_HLT', text="")
+        col.menu("MESH_MT_shape_key_context_menu", icon="DOWNARROW_HLT", text="")
 
         if context.active_object.active_shape_key:
             col.separator()
 
             sub = col.column(align=True)
-            sub.operator("object.shape_key_move", icon='TRIA_UP', text="").type = 'UP'
-            sub.operator("object.shape_key_move", icon='TRIA_DOWN', text="").type = 'DOWN'
+            sub.operator("object.shape_key_move", icon="TRIA_UP", text="").type = "UP"
+            sub.operator("object.shape_key_move", icon="TRIA_DOWN", text="").type = "DOWN"
 
             row = layout.row()
 
@@ -74,36 +79,37 @@ class MIO3SK_PT_main(Panel):
                     for ckey in cobj.data.shape_keys.key_blocks:
                         collection_keys.append(ckey.name)
             # シェイプキー数
-            row.label(text="" + str(len(shape_keys.key_blocks)) + " / " + str(len(list(set(collection_keys)))))
+            row.label(
+                text="" + str(len(shape_keys.key_blocks)) + " / " + str(len(list(set(collection_keys))))
+            )
 
             row.scale_x = 1.8
             row.operator(MIO3SK_OT_reset.bl_idname, text="形状リセット")
 
             row.scale_x = 1
 
-            row.alignment = 'RIGHT'
+            row.alignment = "RIGHT"
             sub = row.row(align=True)
             sub.prop(obj, "show_only_shape_key", text="")
             sub.prop(obj, "use_shape_key_edit_mode", text="")
 
             sub = row.row()
             if shape_keys.use_relative:
-                sub.operator("object.shape_key_clear", icon='X', text="")
+                sub.operator("object.shape_key_clear", icon="X", text="")
             else:
-                sub.operator("object.shape_key_retime", icon='RECOVER_LAST', text="")
+                sub.operator("object.shape_key_retime", icon="RECOVER_LAST", text="")
 
 
 class MIO3SK_UL_shape_keys(UIList):
-    def draw_item(self, context, layout, _data, item, icon, active_data, _active_propname, index):
+    def draw_item(self, context, layout, _data, key_block, icon, active_data, _active_propname, index):
         icons = preview_collections["icons"]
         obj = active_data
-        key_block = item
         prop_s = context.scene.mio3sk
 
-        micon = icons["DEFAULT"].icon_id
-        if prop_s.move_primary:
-            if prop_s.move_primary == key_block.name:
-                micon = icons["MOVE"].icon_id
+        if prop_s.move_primary == key_block.name:
+            micon = icons["MOVE"].icon_id
+        else:
+            micon = icons["DEFAULT"].icon_id
 
         split = layout.split(factor=0.68, align=False)
         split.prop(key_block, "name", text="", emboss=False, icon_value=micon)
@@ -113,7 +119,7 @@ class MIO3SK_UL_shape_keys(UIList):
             obj.mode == "EDIT" and not (obj.use_shape_key_edit_mode and obj.type == "MESH")
         ):
             row.active = False
-        if not item.id_data.use_relative:
+        if not key_block.id_data.use_relative:
             row.prop(key_block, "frame", text="")
         elif index > 0:
             row.prop(key_block, "value", text="")

@@ -153,12 +153,6 @@ class MIO3SK_MT_context(bpy.types.Menu):
 
         layout.separator()
         layout.operator(
-            MIO3SK_OT_remove_shapekey.bl_idname,
-            text=pgettext("Delete shape key except disable"),
-        )
-
-        layout.separator()
-        layout.operator(
             MIO3SK_OT_add_key_current.bl_idname,
             text=pgettext("Add: Shape Key at current position"),
         )
@@ -178,11 +172,16 @@ class MIO3SK_MT_context(bpy.types.Menu):
             MIO3SK_OT_some_file.bl_idname,
             text=pgettext("Add: Import CSV"),
         )
-
         layout.separator()
         layout.operator(
             MIO3SK_OT_fill_keys.bl_idname,
             text=pgettext("Fill Shapekeys"),
+        )
+
+        layout.separator()
+        layout.operator(
+            MIO3SK_OT_remove_shapekey.bl_idname,
+            text=pgettext("Delete shape key except disable"),
         )
 
 

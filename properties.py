@@ -21,7 +21,7 @@ def callback_move_active_multi(self, context):
         bpy.ops.mio3sk.move_remove_primary()
 
 
-class MIO3SK_scene_props(PropertyGroup):
+class MIO3SK_scene_state(PropertyGroup):
     sync_active_shapekey_enabled: bpy.props.BoolProperty(default=True)
 
     blend: bpy.props.FloatProperty(name="ブレンド", default=1, soft_min=-1, soft_max=2, step=10)
@@ -47,7 +47,7 @@ class MIO3SK_scene_props(PropertyGroup):
     rename_replace_sync_collections: bpy.props.BoolProperty(default=True)
 
 
-class MIO3SK_props(bpy.types.PropertyGroup):
+class MIO3SK_object_state(bpy.types.PropertyGroup):
     syncs: bpy.props.PointerProperty(
         name=bpy.app.translations.pgettext("Sync Collection"), type=bpy.types.Collection
     )
@@ -95,8 +95,8 @@ def load_handler(scene):
 
 
 classes = [
-    MIO3SK_scene_props,
-    MIO3SK_props,
+    MIO3SK_scene_state,
+    MIO3SK_object_state,
 ]
 
 
@@ -104,8 +104,8 @@ def register():
     for c in classes:
         bpy.utils.register_class(c)
 
-    bpy.types.Scene.mio3sk = bpy.props.PointerProperty(type=MIO3SK_scene_props)
-    bpy.types.Object.mio3sksync = bpy.props.PointerProperty(type=MIO3SK_props)
+    bpy.types.Scene.mio3sk = bpy.props.PointerProperty(type=MIO3SK_scene_state)
+    bpy.types.Object.mio3sksync = bpy.props.PointerProperty(type=MIO3SK_object_state)
 
     register_msgbus()
 

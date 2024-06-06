@@ -7,6 +7,7 @@ from .define import *
 
 # import time
 
+
 def update_props(self, context):
     prop_s = context.scene.mio3sk
     prop_s.blend = self.blend
@@ -48,11 +49,8 @@ class MIO3SK_OT_blend(Operator):
 
     @classmethod
     def poll(cls, context):
-        return (
-            context.object is not None
-            and context.object.mode == "EDIT"
-            and context.object.data.shape_keys is not None
-        )
+        obj = context.active_object
+        return obj is not None and obj.mode == "EDIT" and obj.data.shape_keys is not None
 
     def execute(self, context):
         # start_time = time.time()
@@ -71,7 +69,7 @@ class MIO3SK_OT_blend(Operator):
 
         selected_verts = [v for v in bm.verts if v.select]
         # Xミラーがオンのとき対称の頂点も追加
-        if context.object.use_mesh_mirror_x and not self.blend_mode in ["LEFT", "RIGHT"]:
+        if obj.use_mesh_mirror_x and not self.blend_mode in ["LEFT", "RIGHT"]:
             selected_verts.extend(self.get_symmetry(bm, selected_verts))
 
         selected_verts_indices = [v.index for v in selected_verts]
@@ -151,10 +149,10 @@ class MIO3SK_OT_blend(Operator):
                 weights /= np.max(weights)  # 正規化
 
         return weights
-    
+
     def gaussian(self, x, mu, sigma):
         return np.exp(-((x - mu) ** 2) / (2 * sigma**2))
-    
+
     def invoke(self, context, event):
         obj = context.active_object
         mesh = obj.data
@@ -208,14 +206,11 @@ class MIO3SK_OT_reset(Operator):
 
     @classmethod
     def poll(cls, context):
-        return (
-            context.object is not None
-            and context.object.mode == "EDIT"
-            and context.object.data.shape_keys is not None
-        )
+        obj = context.active_object
+        return obj is not None and obj.mode == "EDIT" and obj.data.shape_keys is not None
 
     def execute(self, context):
-        mesh = context.object.data
+        mesh = context.active_object.data
         basis = mesh.shape_keys.key_blocks[0]
         try:
             bpy.ops.mesh.blend_from_shape(shape=basis.name, blend=1, add=False)
@@ -234,12 +229,12 @@ class MIO3SK_PT_sub_blend(Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.object is not None and context.object.active_shape_key is not None
+        return context.active_object.data.shape_keys is not None
 
     def draw(self, context):
         prop_s = context.scene.mio3sk
-        prop_o = context.object.mio3sksync
-        shape_keys = context.object.data.shape_keys
+        prop_o = context.active_object.mio3sksync
+        shape_keys = context.active_object.data.shape_keys
 
         layout = self.layout
         row = layout.row(align=True)

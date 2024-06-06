@@ -28,25 +28,21 @@ class MIO3SK_OT_move_ex(Operator):
 
     @classmethod
     def poll(cls, context):
-        return (
-            context.object is not None
-            and context.object.mode == "OBJECT"
-            and context.object.data.shape_keys is not None
-        )
+        obj = context.active_object
+        return obj is not None and obj.mode == "OBJECT" and obj.data.shape_keys is not None
 
     def execute(self, context):
-        object = context.object
+        obj = context.active_object
 
         if self.type == "UP":
-            for i in range(10):
-                if object.active_shape_key_index <= 1:
+            for _ in range(10):
+                if obj.active_shape_key_index <= 1:
                     break
                 bpy.ops.object.shape_key_move(type="UP")
         else:
-            count = len(object.data.shape_keys.key_blocks)
-            print(count)
-            for i in range(10):
-                if object.active_shape_key_index + 1 >= count:
+            count = len(obj.data.shape_keys.key_blocks)
+            for _ in range(10):
+                if obj.active_shape_key_index + 1 >= count:
                     break
                 bpy.ops.object.shape_key_move(type="DOWN")
 
@@ -61,12 +57,13 @@ class MIO3SK_OT_move_set_primary(Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.object is not None and context.object.data.shape_keys is not None
+        obj = context.active_object
+        return obj is not None and obj.data.shape_keys is not None
 
     def execute(self, context):
-        object = context.object
+        obj = context.active_object
         prop_s = context.scene.mio3sk
-        prop_s.move_primary = object.active_shape_key.name
+        prop_s.move_primary = obj.active_shape_key.name
         bpy.msgbus.clear_by_owner(move_msgbus_owner)
         bpy.msgbus.subscribe_rna(
             key=(bpy.types.Object, "active_shape_key_index"),
@@ -85,10 +82,10 @@ class MIO3SK_OT_move_remove_primary(Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.object is not None and context.object.data.shape_keys is not None
+        obj = context.active_object
+        return obj is not None and obj.data.shape_keys is not None
 
     def execute(self, context):
-        object = context.object
         prop_s = context.scene.mio3sk
         prop_s.move_primary = ""
         bpy.msgbus.clear_by_owner(move_msgbus_owner)
@@ -103,35 +100,26 @@ class MIO3SK_OT_move(Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.object is not None and context.object.data.shape_keys is not None
+        obj = context.active_object
+        return obj is not None and obj.data.shape_keys is not None
 
     def execute(self, context):
-        object = context.object
+        obj = context.active_object
         prop_s = context.scene.mio3sk
-        key_blocks = object.data.shape_keys.key_blocks
+        key_blocks = obj.data.shape_keys.key_blocks
         primary_key = prop_s.move_primary
-        secondary_key = object.active_shape_key.name
 
-        if prop_s.move_active_type == "multi":
-            base_idx = key_blocks.find(primary_key)
-            move_idx = object.active_shape_key_index
-        else:
-            base_idx = object.active_shape_key_index
-            move_idx = key_blocks.find(primary_key)
+        base_idx = obj.active_shape_key_index
+        move_idx = key_blocks.find(primary_key)
 
-        object.active_shape_key_index = move_idx
+        obj.active_shape_key_index = move_idx
 
         if base_idx > move_idx:
             [bpy.ops.object.shape_key_move(type="DOWN") for i in range(base_idx - move_idx)]
         elif base_idx < move_idx:
             [bpy.ops.object.shape_key_move(type="UP") for i in range(move_idx - base_idx - 1)]
 
-        if prop_s.move_active_type == "multi":
-            prop_s.move_primary = secondary_key
-            if len(key_blocks) > move_idx:
-                object.active_shape_key_index = move_idx
-        else:
-            prop_s.move_active_single = False
+        prop_s.move_active_single = False
 
         return {"FINISHED"}
 
@@ -145,7 +133,7 @@ class MIO3SK_PT_sub_move(Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.object.active_shape_key is not None
+        return context.active_object.data.shape_keys is not None
 
     def draw(self, context):
         prop_s = context.scene.mio3sk
@@ -170,20 +158,7 @@ class MIO3SK_PT_sub_move(Panel):
             ),
             icon_value=icons["MOVE"].icon_id,
         )
-        row.enabled = context.object.mode == "OBJECT"
-
-        row = layout.row()
-        row.enabled = context.object.mode == "OBJECT"
-        row.row().prop(
-            prop_s,
-            "move_active_multi",
-            text=(
-                "Move below active ShapeKey (Multiple)"
-                if not prop_s.move_active_multi
-                else "Click the keys in order to move"
-            ),
-            icon_value=icons["MOVE"].icon_id,
-        )
+        row.enabled = context.active_object.mode == "OBJECT"
 
 
 classes = [

@@ -20,18 +20,19 @@ class MIO3SK_OT_sort(Operator):
 
     @classmethod
     def poll(cls, context):
+        obj = context.active_object
         return (
-            context.object is not None
-            and context.object.type in OBJECT_TYPES
-            and context.object.mode == "OBJECT"
-            and context.object.active_shape_key is not None
+            obj is not None
+            and obj.type in OBJECT_TYPES
+            and obj.data.shape_keys is not None
+            and obj.mode == "OBJECT"
         )
 
     def execute(self, context):
-        object = context.object
+        obj = context.active_object
         prop_s = context.scene.mio3sk
 
-        key_blocks = object.data.shape_keys.key_blocks
+        key_blocks = obj.data.shape_keys.key_blocks
         target_blocks = key_blocks[1:]
 
         # ToDo 除外方法をリスト方式に変更する
@@ -48,14 +49,14 @@ class MIO3SK_OT_sort(Operator):
             else sorted(target_blocks, key=str.lower, reverse=True)
         )
 
-        current_key_name = object.active_shape_key.name
+        current_key_name = obj.active_shape_key.name
 
         for key in sorted_keys:
             idx = key_blocks.find(key)
-            object.active_shape_key_index = idx
+            obj.active_shape_key_index = idx
             bpy.ops.object.shape_key_move(type="BOTTOM")
 
-        object.active_shape_key_index = key_blocks.find(current_key_name)
+        obj.active_shape_key_index = key_blocks.find(current_key_name)
 
         return {"FINISHED"}
 
@@ -70,7 +71,7 @@ class MIO3SK_PT_sub_sort(Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.object.active_shape_key is not None
+        return context.active_object.data.shape_keys is not None
 
     def draw(self, context):
         prop_s = context.scene.mio3sk

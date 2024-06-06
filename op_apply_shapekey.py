@@ -11,25 +11,25 @@ class MIO3SK_OT_apply_to_basis(Operator):
 
     @classmethod
     def poll(cls, context):
+        obj = context.active_object
         return (
-            context.object is not None
-            and context.object.type in OBJECT_TYPES
-            and context.object.mode == "EDIT"
+            obj is not None
+            and obj.type in OBJECT_TYPES
+            and obj.mode == "EDIT"
+            and obj.data.shape_keys is not None
         )
 
     def execute(self, context):
-        mesh = context.object.data
-        current_mode = context.object.mode
-        current_index = bpy.context.object.active_shape_key_index
-        shapekey_from = context.object.active_shape_key.name
+        obj = context.active_object
+        original_index = obj.active_shape_key_index
+        shapekey_from = obj.active_shape_key.name
 
-        bpy.ops.object.mode_set(mode="EDIT")
-
-        bpy.context.object.active_shape_key_index = 0
-        bpy.ops.mesh.blend_from_shape(shape=shapekey_from, add=False)
-        bpy.context.object.active_shape_key_index = current_index
-
-        bpy.ops.object.mode_set(mode=current_mode)
+        obj.active_shape_key_index = 0
+        try:
+            bpy.ops.mesh.blend_from_shape(shape=shapekey_from, add=False)
+        except Exception as e:
+            self.report({"ERROR"}, str(e))
+        obj.active_shape_key_index = original_index
 
         return {"FINISHED"}
 

@@ -7,17 +7,7 @@ from .define import *
 
 def callback_move_active_single(self, context):
     if self.move_active_single:
-        self.move_active_type = "single"
         self.move_active_multi = False
-        bpy.ops.mio3sk.move_set_primary()
-    else:
-        bpy.ops.mio3sk.move_remove_primary()
-
-
-def callback_move_active_multi(self, context):
-    if self.move_active_multi:
-        self.move_active_type = "multi"
-        self.move_active_single = False
         bpy.ops.mio3sk.move_set_primary()
     else:
         bpy.ops.mio3sk.move_remove_primary()
@@ -31,11 +21,7 @@ class MIO3SK_scene_state(PropertyGroup):
     blend_smooth: bpy.props.BoolProperty(name="スムーズブレンド", default=False)
 
     move_active_single: bpy.props.BoolProperty(update=callback_move_active_single)
-    move_active_multi: bpy.props.BoolProperty(update=callback_move_active_multi)
-    move_active_type: bpy.props.EnumProperty(
-        default="single",
-        items=[("single", "single", ""), ("multi", "multi", "")],
-    )
+
     move_primary: bpy.props.StringProperty()
     move_primary_auto: bpy.props.BoolProperty()
 
@@ -77,7 +63,7 @@ class MIO3SK_object_state(bpy.types.PropertyGroup):
 
 # 変更した名前の検知
 def callback_rename():
-    obj = bpy.context.object
+    obj = bpy.context.active_object
     if obj and obj.type in OBJECT_TYPES and obj.data.shape_keys:
         prop_o = obj.mio3sksync
         key_blocks = obj.data.shape_keys.key_blocks

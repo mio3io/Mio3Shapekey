@@ -84,7 +84,7 @@ class MIO3SK_PT_sub_replace(Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.active_object.active_shape_key is not None
+        return context.active_object.data.shape_keys is not None
 
     def draw(self, context):
         prop_s = context.scene.mio3sk

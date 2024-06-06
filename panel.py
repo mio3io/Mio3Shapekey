@@ -18,15 +18,12 @@ class MIO3SK_PT_main(Panel):
 
     @classmethod
     def poll(cls, context):
-        return (
-            context.object is not None
-            and context.object.type in OBJECT_TYPES
-        )
+        return context.active_object is not None and context.active_object.type in OBJECT_TYPES
 
     def draw(self, context):
-        prop_o = context.object.mio3sksync
-        object = context.object
-        shape_keys = object.data.shape_keys
+        prop_o = context.active_object.mio3sksync
+        obj = context.active_object
+        shape_keys = obj.data.shape_keys
 
         layout = self.layout
 
@@ -47,7 +44,7 @@ class MIO3SK_PT_main(Panel):
             "",
             shape_keys,
             "key_blocks",
-            object,
+            obj,
             "active_shape_key_index",
             rows=5,
         )
@@ -61,7 +58,7 @@ class MIO3SK_PT_main(Panel):
 
         col.menu("MESH_MT_shape_key_context_menu", icon='DOWNARROW_HLT', text="")
 
-        if context.object.active_shape_key:
+        if context.active_object.active_shape_key:
             col.separator()
 
             sub = col.column(align=True)
@@ -86,8 +83,8 @@ class MIO3SK_PT_main(Panel):
 
             row.alignment = 'RIGHT'
             sub = row.row(align=True)
-            sub.prop(object, "show_only_shape_key", text="")
-            sub.prop(object, "use_shape_key_edit_mode", text="")
+            sub.prop(obj, "show_only_shape_key", text="")
+            sub.prop(obj, "use_shape_key_edit_mode", text="")
 
             sub = row.row()
             if shape_keys.use_relative:
@@ -102,16 +99,11 @@ class MIO3SK_UL_shape_keys(UIList):
         obj = active_data
         key_block = item
         prop_s = context.scene.mio3sk
-        prop_o = context.object.mio3sksync
 
         micon = icons["DEFAULT"].icon_id
         if prop_s.move_primary:
-            if prop_s.move_active_type == "multi":
-                if prop_s.move_primary == key_block.name:
-                    micon = icons["PRIMARY"].icon_id
-            else:
-                if prop_s.move_primary == key_block.name:
-                    micon = icons["MOVE"].icon_id
+            if prop_s.move_primary == key_block.name:
+                micon = icons["MOVE"].icon_id
 
         split = layout.split(factor=0.68, align=False)
         split.prop(key_block, "name", text="", emboss=False, icon_value=micon)

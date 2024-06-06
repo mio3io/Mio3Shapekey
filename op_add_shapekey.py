@@ -15,23 +15,24 @@ class MIO3SK_OT_add_key_current(Operator):
 
     @classmethod
     def poll(cls, context):
+        obj = context.active_object
         return (
-            context.object is not None
-            and context.object.type in OBJECT_TYPES
-            and context.object.data.shape_keys is not None
-            and context.object.mode == "OBJECT"
+            obj is not None
+            and obj.type in OBJECT_TYPES
+            and obj.mode == "OBJECT"
+            and obj.data.shape_keys is not None
         )
 
     def execute(self, context):
-        object = context.object
+        obj = context.active_object
 
-        base_idx = object.active_shape_key_index
-        move_idx = len(object.data.shape_keys.key_blocks)
-        object.active_shape_key_index = move_idx
+        base_idx = obj.active_shape_key_index
+        move_idx = len(obj.data.shape_keys.key_blocks)
+        obj.active_shape_key_index = move_idx
 
         bpy.ops.object.shape_key_add(from_mix=False)
-
-        [bpy.ops.object.shape_key_move(type="UP") for i in range(move_idx - base_idx - 1)]
+        for _ in range(move_idx - base_idx - 1):
+            bpy.ops.object.shape_key_move(type="UP")
 
         return {"FINISHED"}
 
@@ -44,7 +45,6 @@ class MIO3SK_OT_some_file(Operator, ImportHelper):
     bl_options = {"REGISTER", "UNDO"}
 
     filename_ext = ".csv"
-
     filter_glob: bpy.props.StringProperty(
         default="*.csv",
         options={"HIDDEN"},
@@ -53,7 +53,8 @@ class MIO3SK_OT_some_file(Operator, ImportHelper):
 
     @classmethod
     def poll(cls, context):
-        return context.object is not None and context.object.type in OBJECT_TYPES
+        obj = context.active_object
+        return obj is not None and obj.type in OBJECT_TYPES
 
     def execute(self, context):
         # context, self.filepath, self.use_setting
@@ -84,7 +85,8 @@ class MIO3SK_OT_add_preset(Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.object is not None and context.object.type in OBJECT_TYPES
+        obj = context.active_object
+        return obj is not None and obj.type in OBJECT_TYPES
 
     def execute(self, context):
         initShapeKey(context)
@@ -105,11 +107,11 @@ class MIO3SK_OT_fill_keys(Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.object is not None and is_sync_collection(context.object)
+        return context.active_object is not None and is_sync_collection(context.active_object)
 
     def execute(self, context):
-        object = context.object
-        prop_o = object.mio3sksync
+        obj = context.active_object
+        prop_o = obj.mio3sksync
 
         collection_keys = []
         for cobj in [o for o in prop_o.syncs.objects if has_shapekey(o)]:
@@ -124,13 +126,13 @@ class MIO3SK_OT_fill_keys(Operator):
 
 
 def addNewKey(keyname, context):
-    if keyname in context.object.data.shape_keys.key_blocks:
+    if keyname in context.active_object.data.shape_keys.key_blocks:
         return
-    context.object.shape_key_add(name=keyname, from_mix=False)
+    context.active_object.shape_key_add(name=keyname, from_mix=False)
 
 
 def initShapeKey(context):
-    if context.object.data.shape_keys is None:
+    if context.active_object.data.shape_keys is None:
         bpy.ops.object.shape_key_add(from_mix=False)
 
 

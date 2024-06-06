@@ -49,11 +49,13 @@ translation_dict = {
             "選択中の頂点",
 
         ("*", "Rename (sync)"):
-            "選択中のシェイプキー名の変更",
+            "シェイプキー名の変更",
         ("*", "Current Name"):
             "現在の名前",
         ("*", "New Name"):
             "新しい名前",
+        ("*", "Rename Sync ShapeKeys"):
+            "同期シェイプキー名の変更",
         ("*", "Replace Names (sync)"):
             "シェイプキー名の置換",
         ("*", "Use Regex"):
@@ -81,12 +83,11 @@ translation_dict = {
 
         ("*", "Sync Active ShapeKey"):
             "選択を同期",
-        ("*", "Auto X Mirror Switching"):
-            "Xミラー編集の自動切り替え",
+        ("*", "Sync ShapeKey Name"):
+            "リネームを同期",
 
         ("*", "Apply to Basis(Selected Vertices)"):
             "選択した頂点をBasisに反映",
-
     }
 }
 

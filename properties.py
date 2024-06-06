@@ -1,6 +1,8 @@
 import bpy
 from bpy.types import PropertyGroup
 from bpy.app.handlers import persistent
+from .op_rename_shapekey import MIO3SK_OT_rename
+from .define import *
 
 
 def callback_move_active_single(self, context):
@@ -23,6 +25,7 @@ def callback_move_active_multi(self, context):
 
 class MIO3SK_scene_state(PropertyGroup):
     sync_active_shapekey_enabled: bpy.props.BoolProperty(default=True)
+    sync_name_enabled: bpy.props.BoolProperty(default=True)
 
     blend: bpy.props.FloatProperty(name="ブレンド", default=1, soft_min=-1, soft_max=2, step=10)
     blend_smooth: bpy.props.BoolProperty(name="スムーズブレンド", default=False)
@@ -39,12 +42,14 @@ class MIO3SK_scene_state(PropertyGroup):
     sort_priority: bpy.props.BoolProperty()
     sort_priority_mute: bpy.props.BoolProperty()
 
-    rename_inputname: bpy.props.StringProperty()
-    rename_sync_collections: bpy.props.BoolProperty(default=True)
     rename_search: bpy.props.StringProperty()
     rename_replace: bpy.props.StringProperty()
     rename_regex: bpy.props.BoolProperty()
     rename_replace_sync_collections: bpy.props.BoolProperty(default=True)
+
+
+class MIO3SK_stored_shape_key_name(bpy.types.PropertyGroup):
+    name: bpy.props.StringProperty()
 
 
 class MIO3SK_object_state(bpy.types.PropertyGroup):
@@ -52,26 +57,44 @@ class MIO3SK_object_state(bpy.types.PropertyGroup):
         name=bpy.app.translations.pgettext("Sync Collection"), type=bpy.types.Collection
     )
     blend_source_name: bpy.props.StringProperty()
+    stored_shape_key_names: bpy.props.CollectionProperty(
+        type=MIO3SK_stored_shape_key_name,
+    )
+
+    def update_stored(self, current_shape_key_names):
+        if not self.stored_shape_key_names:
+            for name in current_shape_key_names:
+                item = self.stored_shape_key_names.add()
+                item.name = name
+        else:
+            stored_shape_key_names = [item.name for item in self.stored_shape_key_names]
+            self.stored_shape_key_names.clear()
+            for name in current_shape_key_names:
+                item = self.stored_shape_key_names.add()
+                item.name = name
+            return stored_shape_key_names
 
 
+# 変更した名前の検知
 def callback_rename():
     obj = bpy.context.object
-    if obj and obj.type in {"MESH", "CURVE", "SURFACE", "LATTICE"} and obj.data.shape_keys:
-        current_shape_key_names = [sk.name for sk in obj.data.shape_keys.key_blocks]
-        if "stored_shape_key_names" not in obj:
-            obj["stored_shape_key_names"] = current_shape_key_names
-        else:
-            stored_shape_key_names = obj["stored_shape_key_names"]
-            # added_keys = set(current_shape_key_names) - set(stored_shape_key_names)
-            removed_keys = set(stored_shape_key_names) - set(current_shape_key_names)
+    if obj and obj.type in OBJECT_TYPES and obj.data.shape_keys:
+        prop_o = obj.mio3sksync
+        key_blocks = obj.data.shape_keys.key_blocks
+        current_shape_key_names = [sk.name for sk in key_blocks]
+
+        stored_names = prop_o.update_stored(current_shape_key_names)
+        if stored_names:
+            removed_keys = set(stored_names) - set(current_shape_key_names)
             if removed_keys:
-                for old_name, new_name in zip(stored_shape_key_names, current_shape_key_names):
-                    prop_o = obj.mio3sksync
+                prop_s = bpy.context.scene.mio3sk
+                for old_name, new_name in zip(stored_names, current_shape_key_names):
                     if old_name != new_name:
-                        if hasattr(prop_o, "blend_source_name") and prop_o.blend_source_name == old_name:
+                        if prop_s.sync_name_enabled:
+                            bpy.ops.mio3sk.rename(old_name=old_name, new_name=new_name)
+                        if prop_o.blend_source_name == old_name:
                             prop_o.blend_source_name = new_name
                         break
-            obj["stored_shape_key_names"] = current_shape_key_names
 
 
 msgbus_owner = object()
@@ -92,9 +115,15 @@ def register_msgbus():
 @persistent
 def load_handler(scene):
     register_msgbus()
+    for obj in bpy.data.objects:
+        if obj.type in OBJECT_TYPES and obj.data.shape_keys:
+            prop_o = obj.mio3sksync
+            key_blocks = obj.data.shape_keys.key_blocks
+            prop_o.update_stored([sk.name for sk in key_blocks])
 
 
 classes = [
+    MIO3SK_stored_shape_key_name,
     MIO3SK_scene_state,
     MIO3SK_object_state,
 ]

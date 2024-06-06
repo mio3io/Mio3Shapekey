@@ -15,8 +15,8 @@ class MIO3SK_PT_sub_options(Panel):
     def draw(self, context):
         prop_s = context.scene.mio3sk
         layout = self.layout
-        row = layout.row()
-        row.prop(prop_s, "sync_active_shapekey_enabled", text="Sync Active ShapeKey")
+        layout.prop(prop_s, "sync_active_shapekey_enabled", text="Sync Active ShapeKey")
+        layout.prop(prop_s, "sync_name_enabled", text="Sync ShapeKey Name")
 
 
 classes = [

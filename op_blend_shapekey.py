@@ -53,6 +53,32 @@ class MIO3SK_OT_blend(Operator):
         obj = context.active_object
         return obj is not None and obj.mode == "EDIT" and obj.data.shape_keys is not None
 
+    def invoke(self, context, event):
+        obj = context.active_object
+        mesh = obj.data
+        prop_s = context.scene.mio3sk
+        prop_o = obj.mio3sksync
+
+        self.blend_source_name = prop_o.blend_source_name
+        self.blend_source = mesh.shape_keys.key_blocks.get(prop_o.blend_source_name)
+
+        if not self.blend_source:
+            self.report({"ERROR"}, "ソースになるシェイプキーがありません")
+            return {"CANCELLED"}
+
+        bpy.ops.object.mode_set(mode="OBJECT")
+        bpy.ops.object.mode_set(mode="EDIT")
+
+        count = mesh.count_selected_items()[0]
+        if count < 1:
+            self.report({"ERROR"}, "頂点が選択されていません")
+            return {"CANCELLED"}
+
+        self.blend = prop_s.blend
+        self.smooth = prop_s.blend_smooth if count >= 2 else False
+
+        return self.execute(context)
+
     def execute(self, context):
         # start_time = time.time()
 
@@ -202,35 +228,6 @@ class MIO3SK_OT_blend(Operator):
 
     def gaussian(self, x, mu, sigma):
         return np.exp(-((x - mu) ** 2) / (2 * sigma**2))
-
-    def invoke(self, context, event):
-        obj = context.active_object
-        mesh = obj.data
-        prop_s = context.scene.mio3sk
-        prop_o = obj.mio3sksync
-
-        self.blend = prop_s.blend
-        self.smooth = prop_s.blend_smooth
-
-        self.blend_source_name = prop_o.blend_source_name
-        self.blend_source = mesh.shape_keys.key_blocks.get(prop_o.blend_source_name)
-
-        if not self.blend_source:
-            self.report({"ERROR"}, "ソースになるシェイプキーがありません")
-            return {"CANCELLED"}
-
-        bpy.ops.object.mode_set(mode="OBJECT")
-        bpy.ops.object.mode_set(mode="EDIT")
-
-        count = mesh.count_selected_items()[0]
-        if count < 1:
-            self.report({"ERROR"}, "頂点が選択されていません")
-            return {"CANCELLED"}
-
-        if count < 2:
-            self.smooth = False
-
-        return self.execute(context)
 
     def draw(self, context):
         layout = self.layout

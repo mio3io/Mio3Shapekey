@@ -23,10 +23,11 @@ class MIO3SK_OT_blend(Operator):
     smooth: bpy.props.BoolProperty(name="スムーズブレンド", default=True)
     add: bpy.props.BoolProperty(name="加算", default=False)
     blend_mode: bpy.props.EnumProperty(
-        name="方向",
+        name="モード",
         default="RADIAL",
         items=[
             ("RADIAL", "Radial", ""),
+            ("SHAPE", "Shape", ""),
             ("LEFT", "Left", ""),
             ("RIGHT", "Right", ""),
             ("TOP", "Top", ""),
@@ -79,7 +80,16 @@ class MIO3SK_OT_blend(Operator):
 
         move_vectors = target_coords - basis_coords
 
-        weights = self.calculate_weights(current_coords)
+        if self.blend_mode in ["LEFT", "RIGHT", "TOP", "BOTTOM"]:
+            weights = self.calculate_weights_direction(selected_verts)
+        else:
+            if self.blend_mode == "SHAPE":
+                weights = self.calculate_weights_shape(selected_verts)
+            else:
+                weights = self.calculate_weights_radial(selected_verts)
+            if self.normalize:
+                weights /= np.max(weights)
+
         weights = weights * self.blend
         if self.add:
             movement_vectors = move_vectors * weights[:, np.newaxis]
@@ -113,42 +123,82 @@ class MIO3SK_OT_blend(Operator):
                     symm_verts.append(symm_vert)
         return symm_verts
 
-    # ウェイト計算
-    def calculate_weights(self, coords):
-        if self.blend_mode in ["LEFT", "RIGHT", "TOP", "BOTTOM"]:
-            axis_index = 0 if self.blend_mode in ["LEFT", "RIGHT"] else 2
-            min_val = np.min(coords[:, axis_index])
-            max_val = np.max(coords[:, axis_index])
-            center_val = (min_val + max_val) / 2
-            grad_width = (max_val - min_val) * self.blend_width  # 幅％
-
-            if max_val == min_val:  # 差がゼロの場合の対処
-                weights = np.full(coords.shape[0], 0.5)
-            else:
-                if self.blend_mode in ["LEFT", "BOTTOM"]:
-                    weights = ((center_val + grad_width / 2) - coords[:, axis_index]) / grad_width
-                else:  # RIGHT or TOP
-                    weights = (coords[:, axis_index] - (center_val - grad_width / 2)) / grad_width
-
-                weights = np.clip(weights, 0, 1)
+    # ウェイト計算(方向)
+    def calculate_weights_direction(self, selected_verts):
+        coords = np.array([v.co for v in selected_verts])
+        axis_index = 0 if self.blend_mode in ["LEFT", "RIGHT"] else 2
+        min_val, max_val = np.min(coords[:, axis_index]), np.max(coords[:, axis_index])
+        center_val = (min_val + max_val) / 2
+        grad_width = (max_val - min_val) * self.blend_width
+        if max_val == min_val:  # 差がゼロの場合の対処
+            weights = np.full(coords.shape[0], 0.5)
         else:
-            center = np.mean(coords, axis=0)
-            distances = np.linalg.norm(coords - center, axis=1)
-            max_distance = np.max(distances)
-            sigma = max_distance / 3
-
-            # 減衰タイプ
-            if self.falloff == "gaussian":
-                gaussian_weights = self.gaussian(distances, 0, sigma)
-                weights = gaussian_weights
-            else:
-                linear_weights = 1 - (distances / max_distance)
-                weights = linear_weights
-
-            if self.normalize:
-                weights /= np.max(weights)  # 正規化
-
+            weights = (coords[:, axis_index] - (center_val - grad_width / 2)) / grad_width
+            if self.blend_mode in ["LEFT", "BOTTOM"]:
+                weights = 1 - weights
+            weights = np.clip(weights, 0, 1)
         return weights
+
+    # ウェイト計算(放射)
+    def calculate_weights_radial(self, selected_verts):
+        coords = np.array([v.co for v in selected_verts])
+
+        center = np.mean(coords, axis=0)
+        distances = np.linalg.norm(coords - center, axis=1)
+        max_distance = np.max(distances)
+        if self.falloff == "gaussian":
+            sigma = max_distance / 3
+            weights = self.gaussian(distances, 0, sigma)
+        else:
+            weights = 1 - (distances / max_distance)
+        return weights
+
+    # ウェイト計算(シェイプ)
+    def calculate_weights_shape(self, selected_verts):
+        distances = self.find_boundary_verts(selected_verts)
+        max_distance = np.max(distances)
+        if self.falloff == "gaussian":
+            sigma = max_distance / 3
+            weights = 1 - self.gaussian(distances, 0, sigma)
+        else:
+            weights = distances / max_distance
+        return weights
+
+    def find_boundary_verts(self, selected_verts):
+        boundary_verts = set()
+        interior_verts = set()
+
+        for v in selected_verts:
+            is_boundary = False
+            for edge in v.link_edges:
+                other_v = edge.other_vert(v)
+                if other_v not in selected_verts:
+                    boundary_verts.add(v)
+                    is_boundary = True
+                    break
+            if not is_boundary:
+                interior_verts.add(v)
+
+        num_verts = len(selected_verts)
+        distances = np.zeros(num_verts)
+
+        if boundary_verts:
+            if interior_verts:
+                boundary_coords = np.array([v.co for v in boundary_verts])
+                coords = np.array([v.co for v in selected_verts])
+
+                for i, v in enumerate(selected_verts):
+                    if v in interior_verts:
+                        vertex_distances = np.linalg.norm(boundary_coords - coords[i], axis=1)
+                        distances[i] = np.min(vertex_distances)
+                    else:
+                        distances[i] = 0.001  # 端
+            else:
+                distances[:] = 1  # 端しかない
+        else:
+            distances[:] = 1  # 端がない
+
+        return distances
 
     def gaussian(self, x, mu, sigma):
         return np.exp(-((x - mu) ** 2) / (2 * sigma**2))
@@ -191,7 +241,7 @@ class MIO3SK_OT_blend(Operator):
         box = layout.box()
         box.enabled = True if self.smooth else False
         box.prop(self, "blend_mode")
-        if self.blend_mode == "RADIAL":
+        if self.blend_mode in {"RADIAL", "SHAPE"}:
             box.prop(self, "falloff")
             box.prop(self, "normalize")
         else:

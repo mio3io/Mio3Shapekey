@@ -5,8 +5,6 @@
 
 ## 入手方法
 
-安定版はリリースページからダウンロードしてください。
-
 最新版は [Code > Download ZIP](https://github.com/mio3io/Mio3Shapekey/archive/master.zip) または Dev ブランチから ZIP ファイルをダウンロードしてください。
 
 ## 機能
